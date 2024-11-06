@@ -1,5 +1,10 @@
 package com.bosch.stocktoship;
-
+/**
+* @author DLA3KOR */
+ 
+/*Feedback: Feedback Class: Ensures getters and setters work correctly for fields like part number, stage, feedback type, and defect type. It also tests the toString() method for correct formatting of feedback.
+Defect Type Enum: Verifies the correct mapping of user input (integers) to defect types using the fromChoice() method.
+Feedback Service: Tests the submitFeedback() method to ensure feedback is processed and returned correctly, and checks that the generateBOM() method works as expected.*/
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
