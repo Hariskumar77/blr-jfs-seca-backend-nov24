@@ -3,11 +3,18 @@ package com.bosch.stocktoship;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.bosch.stocktoship.entity.Invoice;
+import com.bosch.stocktoship.entity.Supplier;
 import com.bosch.stocktoship.entity.User;
+import com.bosch.stocktoship.service.AccountManager;
+import com.bosch.stocktoship.service.Accountant;
 import com.bosch.stocktoship.service.ApplicationData;
 import com.bosch.stocktoship.service.AuthenticationService;
+import com.bosch.stocktoship.service.StoreManager;
 
 import static org.hamcrest.CoreMatchers.*;
+
+import java.io.*;
 
 
 @SpringBootTest
@@ -164,6 +171,138 @@ class StocktoshipApplicationTests {
 	        // Verify that the correct error message is returned
 	        assertThat(result, is("User already exists."));
 	    }
-	}
+	
+
+	    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	    private final PrintStream originalOut = System.out;
+	    private final InputStream originalIn = System.in;
+	 
+	    private Supplier supplier;
+	    private StoreManager storeManager;
+	    private Accountant accountant;
+	    private AccountManager accountManager;
+	 
+	    @Before
+	    public void setUp() {
+	        System.setOut(new PrintStream(outContent));
+	        // Initialize objects required for testing
+	        supplier = new Supplier();
+	        storeManager = new StoreManager();
+	        accountant = new Accountant();
+	        accountManager = new AccountManager();
+	 
+	        // Explicitly generate and add an invoice to the Supplier
+	        Invoice invoice = new Invoice(3000, new Date(), 100000.0, new Date(), 3000, true);
+	        Invoice.generatedInvoices.add(invoice);
+	    }
+	 
+	    @After
+	    public void tearDown() {
+	        System.setOut(originalOut);
+	        System.setIn(originalIn);  // Reset System.in after each test
+	        outContent.reset(); // Clear output after each test
+	    }
+	 
+	    @Test
+	    public void testAccountantEnterPaymentDetails() {
+	        // Simulate input for PO number and confirmation
+	        String input = "3000\ny\n"; 
+	        System.setIn(new ByteArrayInputStream(input.getBytes()));
+	 
+	        accountant.enterPaymentDetails(supplier);
+	 
+	        String output = outContent.toString();
+	        assertTrue("Accountant entering details message missing", output.contains("Accountant Entering Details"));
+	        assertTrue("Supplier name missing", output.contains("Supplier Name: Suresh"));
+	        assertTrue("Amount Due missing", output.contains("Amount Due: 100000.0"));
+	        assertTrue("Submission confirmation prompt missing", output.contains("Do you want to submit (y/n)"));
+	    }
+	 
+	    @Test
+	    public void testAccountantPay() {
+	        // Simulate input for PO number and payment confirmation
+	        String input = "3000\ny\n"; 
+	        System.setIn(new ByteArrayInputStream(input.getBytes()));
+	 
+	        accountant.pay(supplier);
+	 
+	        String output = outContent.toString();
+	        assertTrue("Accountant entering details message missing", output.contains("Accountant Entering Details"));
+	        assertTrue("Supplier name missing", output.contains("Supplier Name: Suresh"));
+	        assertTrue("Amount Due missing", output.contains("Amount Due: 100000.0"));
+	        assertTrue("Payment process message missing", output.contains("Payment Under Process"));
+	        assertTrue("Notification to Account Manager missing", output.contains("Received Notification for Approval from Accountant"));
+	    }
+	 
+	    @Test
+	    public void testAccountManagerViewPaymentDetails() {
+	        // Simulate input for PO number and approval
+	        String input = "3000\ny\n"; // PO number and 'yes' for approval
+	        System.setIn(new ByteArrayInputStream(input.getBytes()));
+	 
+	        // Run the method
+	        accountManager.viewPaymentDetails(supplier);
+	 
+	        // Capture output
+	        String output = outContent.toString().trim(); // Capture raw output for validation
+	 
+	        // Assert output matches expected strings
+	        assertTrue("Missing Account Manager entering details message", output.contains("Account Manager Entering Details"));
+	        assertTrue("Prompt for PO number missing", output.contains("Enter PO Number"));
+	        assertTrue("Invoice found confirmation missing", output.contains("Invoice found"));
+	        assertTrue("Entering payment details prompt missing", output.contains("Entering payment details"));
+	        assertTrue("Supplier name missing in details", output.contains("Supplier Name: Suresh"));
+	        assertTrue("Company name missing in details", output.contains("Company Name: JK Trader"));
+	        assertTrue("Payment terms missing in details", output.contains("Payment Terms: PDC"));
+	        assertTrue("Bank details header missing", output.contains("Bank Details"));
+	        assertTrue("Bank name missing", output.contains("Bank Name: HDFC"));
+	        assertTrue("Bank account number missing", output.contains("Bank Account Number: 698635373"));
+	        assertTrue("IFSC code missing", output.contains("Bank IFSC: HDFC00098"));
+	        assertTrue("Due date missing", output.contains("Due Date"));
+	        assertTrue("Amount due missing", output.contains("Amount Due: 100000.0"));
+	        assertTrue("Approval prompt missing", output.contains("Do you want to approve (y/n)"));
+	    }
+	 
+	 
+	    @Test
+	    public void testStoreManagerApproval() {
+	        // Simulate input for approval
+	        String input = "y\n";
+	        System.setIn(new ByteArrayInputStream(input.getBytes()));
+	 
+	        storeManager.checkForApproval();
+	 
+	        String output = outContent.toString();
+	        assertTrue("Approval message missing", output.contains("Approved by Store Manager"));
+	        assertTrue("Notification to Accountant missing", output.contains("Sending Notification of Approval to Accountant"));
+	    }
+	 
+	    @Test
+	    public void testStoreManagerRejectInvoice() {
+	        // Simulate input for rejection
+	        String input = "n\n";
+	        System.setIn(new ByteArrayInputStream(input.getBytes()));
+	 
+	        storeManager.checkForApproval();
+	 
+	        String output = outContent.toString();
+	        assertTrue("Rejection message missing", output.contains("Rejected by Store Manager"));
+	    }
+	 
+	    @Test
+	    public void testInvoiceGeneration() {
+	        // Create a new invoice and call generateInvoice()
+	        Invoice invoice = new Invoice(1235, new Date(), 50000.00, new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000), 3001, false);
+	        invoice.generateInvoice();
+	 
+	        assertTrue("Invoice was not added to the list", Invoice.getGeneratedInvoices().contains(invoice));
+	    }
+
+
+
+
+
 
 }
+
+
