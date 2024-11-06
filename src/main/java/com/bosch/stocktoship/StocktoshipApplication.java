@@ -1,7 +1,8 @@
 package com.bosch.stocktoship;
+
 /**
 *
-* @authors Varun Joshi VJO3KOR
+* @authors Varun Joshi VJO3KOR, LDO1COB Soundarya 
 * 
 * */
 import org.springframework.boot.SpringApplication;
@@ -57,6 +58,57 @@ public class StocktoshipApplication {
 		    }
 		    
         }while(!submitResponse.equalsIgnoreCase("submit"));
+        
+        PurchaseOrder po = new PurchaseOrder();
+		MaterialRequisition mRequisition = new MaterialRequisition();
+		
+			
+		System.out.println("\n*****************Material requisition and Purchase Order Module*****************\n");
+		
+		String prNo;
+		
+		RequisitionItem item = new RequisitionItem();
+		System.out.println("Enter the PR number ");
+		
+		while(true) {
+		
+			 prNo = scanner.nextLine();
+			 
+			 if(PurchaseRequisition.prnMap.containsKey(prNo)){
+				 
+				 item = PurchaseRequisition.prnMap.get(prNo);
+			
+				// checking for PR status
+				if(item.approvalStatus.equalsIgnoreCase("Approved")){
+					
+					System.out.println("\nPR is approved. So, moving to Material requisition\n");
+					
+			        mRequisition.requestQuotations(item);
+			        
+			        List<Supplier> suppliers = new ArrayList<>();
+			        suppliers = mRequisition.getSuppliers();
+			        
+			        System.out.println("\nSelect a supplier from the list:");
+			        for (int i = 0; i < suppliers.size(); i++) {
+			            System.out.println((i + 1) + ". " + suppliers.get(i).toString());
+			        }
+			        System.out.println("Enter the serial no of the supplier you choose: ");
+			        int choice = scanner.nextInt();
+			        
+			        Supplier supplier = mRequisition.selectSupplier(choice);
+			        
+			        po.placePurchaseOrder(prNo, item, supplier);
+				} else {
+					System.out.println("PR is not approved yet...");
+				}
+				break;
+			 } else {
+				 System.out.println("Enter the correct PR number");
+				 continue;
+			 }
+		}
+		
+        scanner.close();
         
 
 	}
