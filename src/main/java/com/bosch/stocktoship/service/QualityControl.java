@@ -53,6 +53,7 @@ public class QualityControl {
 
 	/**
 	 * Collects data for the given sample size and part code from the user.
+	 * 
 	 * @author BPOO1KOR
 	 * @param sampleSize the number of samples to collect data for.
 	 * @param partCode   the part code to associate the data with.
@@ -185,9 +186,96 @@ public class QualityControl {
 		System.out.println("Data saved successfully for stage: " + currentStage);
 	}
 
-	public void submitData() {
+	public void submitData(int stageChoice, String partCode) {
 		System.out.println("\n--- Submitting Quality Control Data for " + currentStage + " ---");
 		displayData();
+		collectFeedback(stageChoice, partCode);
+	}
+
+	/**
+	 * Collects feedback for a specific part and stage.
+	 * 
+	 * @author BAP3COB
+	 * @param stageChoice the choice of the stage.
+	 * @param partCode    the part code to associate with the feedback.
+	 */
+
+	private void collectFeedback(int stageChoice, String partCode) {
+		Scanner scanner = new Scanner(System.in);
+		try {
+			Feedback feedback = new Feedback();
+			FeedbackService feedbackService = new FeedbackService();
+
+			displayHeader(stageChoice, partCode);
+			getPartDescription(feedback, scanner);
+			getFeedbackType(feedback, scanner);
+			if ("QA Failed".equals(feedback.getFeedbackType())) {
+				getDefectType(feedback, scanner);
+			}
+			getRemarks(feedback, scanner);
+			submitOrGenerateBOM(feedbackService, feedback, scanner);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void displayHeader(int stageChoice, String partCode) {
+		System.out.println("Quality Control Feedback");
+		System.out.println("------------------------");
+		System.out.print("Stage: ");
+		System.out.println(stages.get(stageChoice - 1));
+		System.out.print("Part Number: ");
+		System.out.println(partCode);
+	}
+
+	private void getPartDescription(Feedback feedback, Scanner scanner) {
+		System.out.print("Part Description: ");
+		feedback.setPartDescription(scanner.nextLine());
+	}
+
+	private void getFeedbackType(Feedback feedback, Scanner scanner) {
+		System.out.println("\nFeedback Options:");
+		System.out.println("1. QA Failed");
+		System.out.println("2. Met the Requirements");
+		System.out.print("Enter your choice (1 or 2): ");
+		int feedbackChoice = scanner.nextInt();
+		scanner.nextLine();
+		feedback.setFeedbackType(feedbackChoice == 1 ? "QA Failed" : "Met the Requirements");
+	}
+
+	private void getDefectType(Feedback feedback, Scanner scanner) {
+		System.out.println("\nType of Defect:");
+		System.out.println("1. Dimensional Error");
+		System.out.println("2. Defective Part");
+		System.out.println("3. Missing Part");
+		System.out.print("Enter your choice (1-3): ");
+		int defectChoice = scanner.nextInt();
+		scanner.nextLine();
+		feedback.setDefectType(DefectType.fromChoice(defectChoice));
+		if (feedback.getDefectType() == null) {
+			System.out.println("Invalid choice for defect type. Exiting...");
+		}
+	}
+
+	private void getRemarks(Feedback feedback, Scanner scanner) {
+		System.out.print("\nRemarks: ");
+		feedback.setRemarks(scanner.nextLine());
+	}
+
+	private void submitOrGenerateBOM(FeedbackService feedbackService, Feedback feedback, Scanner scanner) {
+		System.out.println("\nSubmit or Generate BOM");
+		System.out.println("1. Submit Feedback");
+		System.out.println("2. Generate BOM");
+		System.out.print("Enter your choice (1 or 2): ");
+		int actionChoice = scanner.nextInt();
+
+		if (actionChoice == 1) {
+			System.out.println(feedbackService.submitFeedback(feedback));
+		} else if (actionChoice == 2) {
+			System.out.println(feedbackService.generateBOM());
+		} else {
+			System.out.println("Invalid choice. Exiting...");
+		}
 	}
 
 	public void displayData() {

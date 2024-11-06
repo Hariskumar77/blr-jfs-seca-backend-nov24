@@ -56,7 +56,7 @@ public class Main {
 						break;
 
 					case 4:
-						qualityControl.submitData();
+						qualityControl.submitData(stageChoice, partCode);
 						break;
 
 					case 5:
