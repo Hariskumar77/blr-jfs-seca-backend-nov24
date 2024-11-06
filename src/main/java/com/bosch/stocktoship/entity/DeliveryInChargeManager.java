@@ -1,3 +1,5 @@
+package com.bosch.stocktoship.entity;
+
 import java.util.HashMap;
 import java.util.Map;
 

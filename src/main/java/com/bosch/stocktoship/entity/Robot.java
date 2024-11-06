@@ -1,3 +1,5 @@
+package com.bosch.stocktoship.entity;
+
 /***
 * Represents a Robot assigned to handle a product with a specific product code.
 * AUTHOR: CHARUL SAINI(SIC2COB)
