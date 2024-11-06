@@ -1,4 +1,7 @@
-package com.bosch.sprint1;
+package com.bosch.stocktoship.service;
+
+import com.bosch.stocktoship.entity.Feedback;
+
 /**
  * @author BAP3COB
  * Service class for handling feedback-related operations.

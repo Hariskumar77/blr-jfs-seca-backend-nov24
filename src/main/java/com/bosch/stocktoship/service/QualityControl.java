@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import com.bosch.stocktoship.entity.DefectType;
+import com.bosch.stocktoship.entity.Feedback;
 import com.bosch.stocktoship.entity.ParameterData;
 
 public class QualityControl {

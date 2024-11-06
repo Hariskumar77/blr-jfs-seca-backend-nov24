@@ -1,4 +1,4 @@
-package com.bosch.sprint1;
+package com.bosch.stocktoship.entity;
 /**
  * @author BAP3COB
  * Class representing feedback information for a particular part or product stage.

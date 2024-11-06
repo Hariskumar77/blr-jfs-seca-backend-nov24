@@ -1,4 +1,4 @@
-package com.bosch.sprint1;
+package com.bosch.stocktoship.entity;
 
 /**
  * @author BAP3COB
