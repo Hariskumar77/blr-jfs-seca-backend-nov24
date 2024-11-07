@@ -2,6 +2,7 @@ package com.bosch.stocktoship;
  
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import com.bosch.stocktoship.entity.InboundRequisition;
 import com.bosch.stocktoship.entity.Location;
@@ -11,7 +12,8 @@ import static org.junit.Assert.*;
  
 import java.util.ArrayList;
 import java.util.List;
- 
+
+@SpringBootTest 
 public class InBoundTesting {
     /**
      * AUTHOR: MUJAHID DAFEDAR(DAFB1KOR)
@@ -112,4 +114,9 @@ public class InBoundTesting {
         assertEquals("Expected 2 locations in the product locations list", 2, locations.size());
         assertEquals("Expected locations to match mock locations", mockLocations, locations);
     }
+    
+    
+    
+    
+    
 }

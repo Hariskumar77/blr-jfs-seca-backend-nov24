@@ -2,7 +2,7 @@ package com.bosch.stocktoship.entity;
 
 import java.util.*;
 
-public class MainTest {
+public class Main {
     /*
      * AUTHOR: AYUSH ARYA (YYA2COB)
      * AUTHOR: CHARUL SAINI (SIC2COB)
