@@ -6,9 +6,9 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.bosch.stocktoship.entity.InboundRequisition;
+import com.bosch.stocktoship.service.InboundRequisition;
 import com.bosch.stocktoship.entity.Location;
-import com.bosch.stocktoship.entity.OutboundRequisitionForm;
+import com.bosch.stocktoship.service.OutboundRequisitionForm;
 import com.bosch.stocktoship.entity.Product;
 
 import java.io.*;

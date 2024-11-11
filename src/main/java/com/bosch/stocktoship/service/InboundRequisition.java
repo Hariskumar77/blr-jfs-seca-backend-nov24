@@ -1,9 +1,13 @@
-package com.bosch.stocktoship.entity;
+package com.bosch.stocktoship.service;
 
 
 
 
 import java.util.*;
+
+import com.bosch.stocktoship.entity.Location;
+import com.bosch.stocktoship.entity.Product;
+import com.bosch.stocktoship.entity.Robot;
 
 public class InboundRequisition {
 

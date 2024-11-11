@@ -1,8 +1,12 @@
-package com.bosch.stocktoship.entity;
+package com.bosch.stocktoship.service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import com.bosch.stocktoship.entity.DeliveryInChargeManager;
+import com.bosch.stocktoship.entity.Location;
+import com.bosch.stocktoship.entity.Robot;
 
 /**
  * AUTHOR: CHARUL SAINI (SIC2COB)
