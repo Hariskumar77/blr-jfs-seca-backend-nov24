@@ -18,7 +18,24 @@ public class Supplier {
     private long bankAccountNumber = 698635373;
     private String ifscCode = "HDFC00098";
 
-    // Getter and Setter for paymentTerms
+    public Supplier() {
+    	
+    }
+    
+    public Supplier(String supplierId, String supplierName, String comapanyName, String paymentTerms, String city,
+			String bankName, long bankAccountNumber, String ifscCode) {
+		super();
+		this.supplierId = supplierId;
+		this.supplierName = supplierName;
+		this.comapanyName = comapanyName;
+		this.paymentTerms = paymentTerms;
+		this.city = city;
+		this.bankName = bankName;
+		this.bankAccountNumber = bankAccountNumber;
+		this.ifscCode = ifscCode;
+	}
+
+	// Getter and Setter for paymentTerms
     public String getPaymentTerms() {
         return paymentTerms;
     }
