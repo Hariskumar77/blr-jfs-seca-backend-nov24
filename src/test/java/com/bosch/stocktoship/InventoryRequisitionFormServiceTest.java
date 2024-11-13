@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.text.SimpleDateFormat;
+import java.util.Scanner;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +62,8 @@ public class InventoryRequisitionFormServiceTest {
     @Test
     public void testManageIRF() {
     	try {
-			inventoryRequisitionFormService.manageIRF();
+    		Scanner input = new Scanner(System.in);
+			inventoryRequisitionFormService.manageIRF(input);
 			assertEquals(1, InventoryRequisitionFormService.inventoryRequisitionFormList.size());
 		} catch (Exception e) {
 			fail("Exception occured whilerunning");

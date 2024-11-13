@@ -27,252 +27,259 @@ import com.bosch.stocktoship.service.StoreManager;
 @SpringBootApplication
 public class StocktoshipApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(StocktoshipApplication.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(StocktoshipApplication.class, args);
 
-		ApplicationData app = new ApplicationData(); // Create an instance of the Application class
-		app.start();
+        ApplicationData app = new ApplicationData(); // Create an instance of the Application class
+        app.start();
 
-		Supplier supplier = new Supplier();
-		supplier.callInvoice();
+        Scanner scanner = new Scanner(System.in);
 
-		// Store Manager operations: display invoice and check for approval
-		StoreManager storeManager = new StoreManager();
-		storeManager.displayInvoice(); // Display details of the selected invoice
-		storeManager.checkForApproval(); // Check for approval of the invoice
+        // Main loop to display the menu after each task is completed
+        while (true) {
+            System.out.println("\nSTOCK-TO-SHIP");
+            System.out.println("Enter your choice:");
+            System.out.println("1. Ware-You-Go");
+            System.out.println("2. Car-O-Drive");
+            System.out.println("3. Stock Vault");
+            System.out.println("4. Exit");
 
-		// Accountant operations: enter payment details and process payment if approved
-		Accountant accountant = new Accountant();
-		accountant.enterPaymentDetails(supplier); // Accountant enters payment details for the supplier
+            // Read user choice for main menu
+            int choice = Integer.parseInt(scanner.nextLine());
 
-		// If the invoice is approved, proceed with payment
-		if (Invoice.invoiceStatus == true) {
-			accountant.pay(supplier);
-		}
+            switch (choice) {
+                case 1:
+                    // Handle Ware-You-Go option (Inbound or Outbound Management)
+                    System.out.println("Inbound and Outbound");
+                    System.out.println("Enter your choice:");
+                    System.out.println("1. Inbound Management");
+                    System.out.println("2. OutBound Management");
+                    int managementChoice = Integer.parseInt(scanner.nextLine());
 
-		// Account Manager operations: view payment details for the supplier
-		AccountManager accountManager = new AccountManager();
-		accountManager.viewPaymentDetails(supplier); // Account Manager views the payment details
+                    if (managementChoice == 1) {
+                        // Inbound Management
+                        InboundRequisition inboundRequisition = new InboundRequisition();
+                        inboundRequisition.inboundMgmt();
+                    } else if (managementChoice == 2) {
+                        // Outbound Management
+                        OutboundRequisitionForm outboundRequisitionForm = new OutboundRequisitionForm();
+                        outboundRequisitionForm.displayDetails();
+                    } else {
+                        System.out.println("Invalid Input");
+                    }
+                    break;
 
-		// ----------------Squad2---------------
+                case 2:
+                    // Handle Car-O-Drive option
+                    System.out.println("Car-O-Drive");
 
-		Scanner scanner = new Scanner(System.in);
+                    // Squad-4
+                    QualityControl qualityControl = new QualityControl();
+                    String partCode = null;
+                    boolean exitStage = false;
+                    while (!exitStage) {
+                        System.out.println("\nSelect the stage:");
+                        qualityControl.displayStages();
+                        int stageChoice = scanner.nextInt();
+                        scanner.nextLine();
 
-		System.out.println("STOCK-TO-SHIP");
-		System.out.println("Enter your choice");
-		System.out.println("1. Ware-You-Go");
-		System.out.println("2. Car-O-Drive");
-		System.out.println("3. Stock Vault");
+                        if (stageChoice > 0 && stageChoice <= qualityControl.getStages().size()) {
+                            String selectedStage = qualityControl.getStages().get(stageChoice - 1);
+                            qualityControl.setCurrentStage(selectedStage);
 
-		// Read user choice for main menu
-		int choice = Integer.parseInt(scanner.nextLine());
+                            
+                            while (!exitStage) {
 
-		switch (choice) {
-		case 1:
-			// Handle Ware-You-Go option (Inbound or Outbound Management)
-			System.out.println("Inbound and Outbound");
-			System.out.println("Enter your choice");
-			System.out.println("1. Inbound Management");
-			System.out.println("2. OutBound Management");
-			int managementChoice = Integer.parseInt(scanner.nextLine());
+                                System.out.println("\nOptions: 1. Enter Data 2. Edit Data 3. Save 4. Submit 5. Exit Stage");
+                                System.out.print("Choose an option: ");
 
-			if (managementChoice == 1) {
-				// Inbound Management
-				InboundRequisition inboundRequisition = new InboundRequisition();
-				inboundRequisition.inboundMgmt();
-			} else if (managementChoice == 2) {
-				// Outbound Management
-				OutboundRequisitionForm outboundRequisitionForm = new OutboundRequisitionForm();
-				outboundRequisitionForm.displayDetails();
-			} else {
-				System.out.println("Invalid Input");
-			}
-			break;
-		case 2:
-			// Handle Car-O-Drive option
-			System.out.println("Car-O-Drive");
+                                int option = scanner.nextInt();
+                                switch (option) {
+                                    case 1:
+                                        System.out.print("Enter the sample size: ");
+                                        int sampleSize = scanner.nextInt();
+                                        scanner.nextLine();
 
-			// Squad-4
-			QualityControl qualityControl = new QualityControl();
-			String partCode = null;
-			System.out.println("Quality Control");
-			while (true) {
-				System.out.println("\nSelect the stage:");
-				qualityControl.displayStages();
-				int stageChoice = scanner.nextInt();
-				scanner.nextLine();
+                                        System.out.print("Enter/Scan the part code: ");
+                                        partCode = scanner.nextLine();
 
-				if (stageChoice > 0 && stageChoice <= qualityControl.getStages().size()) {
-					String selectedStage = qualityControl.getStages().get(stageChoice - 1);
-					qualityControl.setCurrentStage(selectedStage);
+                                        qualityControl.collectData(sampleSize, partCode, scanner);
+                                        break;
 
-					boolean exitStage = false;
-					while (!exitStage) {
+                                    case 2:
+                                        qualityControl.editData(scanner);
+                                        break;
 
-						System.out.println("\nOptions: 1. Enter Data 2. Edit Data 3. Save 4. Submit 5. Exit Stage");
-						System.out.print("Choose an option: ");
+                                    case 3:
+                                        qualityControl.saveData();
+                                        break;
 
-						int option = scanner.nextInt();
-						switch (option) {
-						case 1:
-							System.out.print("Enter the sample size: ");
-							int sampleSize = scanner.nextInt();
-							scanner.nextLine();
+                                    case 4:
+                                        qualityControl.submitData(stageChoice, partCode);
+                                        break;
 
-							System.out.print("Enter/Scan the part code: ");
-							partCode = scanner.nextLine();
+                                    case 5:
+                                        exitStage = true;
+                                        break;
 
-							qualityControl.collectData(sampleSize, partCode, scanner);
-							break;
+                                    default:
+                                        System.out.println("Invalid option. Please try again.");
+                                }
+                            }
+                        } else {
+                            System.out.println("Invalid stage selection. Try again.");
+                        }
+                    }
 
-						case 2:
-							qualityControl.editData(scanner);
-							break;
+                case 3:
+                    // Handle Stock Vault option
+                    System.out.println("Stock Vault");
 
-						case 3:
-							qualityControl.saveData();
-							break;
+                    // Squad-3
+                    // Create a BOMMain instance to manage BOM processes
+                    BOMMain bomMain = new BOMMain();
 
-						case 4:
-							qualityControl.submitData(stageChoice, partCode);
-							break;
+                    try {
+                        // Collect general item details and store them in an ItemCodeGeneration object
+                        ItemCodeGeneration item = bomMain.collectItemDetails();
 
-						case 5:
-							exitStage = true;
-							break;
+                        // Collect specific BOM details (dimensions, quantity, etc.) for the item
+                        bomMain.collectBOMDetails(item);
 
-						default:
-							System.out.println("Invalid option. Please try again.");
-						}
-					}
-				} else {
-					System.out.println("Invalid stage selection. Try again.");
-				}
-			}
+                        // Display the collected BOM details in a formatted table
+                        bomMain.displayBOMDetails(item);
 
-		case 3:
-			// Handle Stock Vault option
-			System.out.println("Stock Vault");
+                    } catch (Exception e) {
+                        // Print any error that occurs during BOM collection or display
+                        System.out.println("An unexpected error occurred: " + e.getMessage());
+                    }
+                    InventoryRequisitionFormService service = new InventoryRequisitionFormService();
+                    service.manageIRF(scanner);
 
-			// Squad-3
-			// Create a BOMMain instance to manage BOM processes
-			BOMMain bomMain = new BOMMain();
+                    // Squad-5
+                    // Enter PR details
 
-			try {
-				// Collect general item details and store them in an ItemCodeGeneration object
-				ItemCodeGeneration item = bomMain.collectItemDetails();
+                    PurchaseRequisition pr = null;
 
-				// Collect specific BOM details (dimensions, quantity, etc.) for the item
-				bomMain.collectBOMDetails(item);
+                    System.out.print("Item Code: ");
+                    String itemCode = scanner.nextLine();
 
-				// Display the collected BOM details in a formatted table
-				bomMain.displayBOMDetails(item);
+                    System.out.print("Purpose Description: ");
+                    String purposeDescription = scanner.nextLine();
 
-			} catch (Exception e) {
-				// Print any error that occurs during BOM collection or display
-				System.out.println("An unexpected error occurred: " + e.getMessage());
-			}
-			InventoryRequisitionFormService service = new InventoryRequisitionFormService();
-			service.manageIRF();
+                    System.out.print("Quantity: ");
+                    int quantity = Integer.parseInt(scanner.nextLine());
 
-			// squad-5
-//              Enter PR details
+                    System.out.print("Unit (kg/gm/barrel/meter etc.): ");
+                    String unit = scanner.nextLine();
 
-			PurchaseRequisition pr = null;
+                    System.out.print("Department (optional, leave blank for none): ");
+                    String department = scanner.nextLine();
 
-			System.out.print("Item Code: ");
-			String itemCode = scanner.nextLine();
+                    System.out.print("Company Make: ");
+                    String companyMake = scanner.nextLine();
 
-			System.out.print("Purpose Description: ");
-			String purposeDescription = scanner.nextLine();
+                    // Create Purchase Requisition with items
+                    pr = new PurchaseRequisition(
+                            new RequisitionItem(itemCode, purposeDescription, quantity, unit, department, companyMake));
+                    // Display PR details
+                    pr.displayPRDetails();
 
-			System.out.print("Quantity: ");
-			int quantity = Integer.parseInt(scanner.nextLine());
+                    // Submit PR
+                    String submitResponse;
+                    do {
+                        System.out.print("\nType SUBMIT to Submit the PR");
+                        submitResponse = scanner.nextLine();
+                        if (submitResponse.equalsIgnoreCase("submit")) {
+                            pr.submitPR();
+                            // Process approval and move items to departments
+                            pr.processApproval();
+                        } else {
+                            System.out.println("PR not submitted.");
+                        }
 
-			System.out.print("Unit (kg/gm/barrel/meter etc.): ");
-			String unit = scanner.nextLine();
+                    } while (!submitResponse.equalsIgnoreCase("submit"));
 
-			System.out.print("Department (optional, leave blank for none): ");
-			String department = scanner.nextLine();
+                    PurchaseOrder po = new PurchaseOrder();
+                    MaterialRequisition mRequisition = new MaterialRequisition();
 
-			System.out.print("Company Make: ");
-			String companyMake = scanner.nextLine();
+                    System.out.println("\n*****************Material requisition and Purchase Order Module*****************\n");
 
-			// Create Purchase Requisition with items
-			pr = new PurchaseRequisition(
-					new RequisitionItem(itemCode, purposeDescription, quantity, unit, department, companyMake));
-			// Display PR details
-			pr.displayPRDetails();
+                    String prNo;
 
-			// Submit PR
-			String submitResponse;
-			do {
-				System.out.print("\nType SUBMIT to Submit the PR");
-				submitResponse = scanner.nextLine();
-				if (submitResponse.equalsIgnoreCase("submit")) {
-					pr.submitPR();
-					// Process approval and move items to departments
-					pr.processApproval();
-				} else {
-					System.out.println("PR not submitted.");
-				}
+                    RequisitionItem item1 = new RequisitionItem();
+                    System.out.println("Enter the PR number ");
 
-			} while (!submitResponse.equalsIgnoreCase("submit"));
+                    while (true) {
 
-			PurchaseOrder po = new PurchaseOrder();
-			MaterialRequisition mRequisition = new MaterialRequisition();
+                        prNo = scanner.nextLine();
 
-			System.out.println("\n*****************Material requisition and Purchase Order Module*****************\n");
+                        if (PurchaseRequisition.prnMap.containsKey(prNo)) {
 
-			String prNo;
+                            item1 = PurchaseRequisition.prnMap.get(prNo);
 
-			RequisitionItem item = new RequisitionItem();
-			System.out.println("Enter the PR number ");
+                            // checking for PR status
+                            if (item1.approvalStatus.equalsIgnoreCase("Approved")) {
 
-			while (true) {
+                                System.out.println("\nPR is approved. So, moving to Material requisition\n");
 
-				prNo = scanner.nextLine();
+                                mRequisition.requestQuotations(item1);
 
-				if (PurchaseRequisition.prnMap.containsKey(prNo)) {
+                                List<Supplier> suppliers = new ArrayList<>();
+                                suppliers = mRequisition.getSuppliers();
 
-					item = PurchaseRequisition.prnMap.get(prNo);
+                                System.out.println("\nSelect a supplier from the list:");
+                                for (int i = 0; i < suppliers.size(); i++) {
+                                    System.out.println((i + 1) + ". " + suppliers.get(i).toString());
+                                }
+                                System.out.println("Enter the serial no of the supplier you choose: ");
+                                int supplierChoice = scanner.nextInt();
 
-					// checking for PR status
-					if (item.approvalStatus.equalsIgnoreCase("Approved")) {
+                                Supplier supplier2 = mRequisition.selectSupplier(supplierChoice);
 
-						System.out.println("\nPR is approved. So, moving to Material requisition\n");
+                                po.placePurchaseOrder(prNo, item1, supplier2);
+                            } else {
+                                System.out.println("PR is not approved yet...");
+                            }
+                            break;
+                        } else {
+                            System.out.println("Enter the correct PR number");
+                            continue;
+                        }
+                    }
 
-						mRequisition.requestQuotations(item);
+                    Supplier supplier = new Supplier();
+                    supplier.callInvoice();
 
-						List<Supplier> suppliers = new ArrayList<>();
-						suppliers = mRequisition.getSuppliers();
+                    // Store Manager operations: display invoice and check for approval
+                    StoreManager storeManager = new StoreManager();
+                    storeManager.displayInvoice(); // Display details of the selected invoice
+                    storeManager.checkForApproval(); // Check for approval of the invoice
 
-						System.out.println("\nSelect a supplier from the list:");
-						for (int i = 0; i < suppliers.size(); i++) {
-							System.out.println((i + 1) + ". " + suppliers.get(i).toString());
-						}
-						System.out.println("Enter the serial no of the supplier you choose: ");
-						int supplierChoice = scanner.nextInt();
+                    // Accountant operations: enter payment details and process payment if approved
+                    Accountant accountant = new Accountant();
+                    accountant.enterPaymentDetails(supplier); // Accountant enters payment details for the supplier
 
-						Supplier supplier2 = mRequisition.selectSupplier(supplierChoice);
+                    // If the invoice is approved, proceed with payment
+                    if (Invoice.invoiceStatus == true) {
+                        accountant.pay(supplier);
+                    }
 
-						po.placePurchaseOrder(prNo, item, supplier2);
-					} else {
-						System.out.println("PR is not approved yet...");
-					}
-					break;
-				} else {
-					System.out.println("Enter the correct PR number");
-					continue;
-				}
-			}
+                    // Account Manager operations: view payment details for the supplier
+                    AccountManager accountManager = new AccountManager();
+                    accountManager.viewPaymentDetails(supplier); // Account Manager views the payment details
+                    break;
 
-			break;
-		default:
-			// Handle invalid choice
-			System.out.println("Invalid Input");
-			break;
-		}
-	}
+                case 4:
+                    // Exit the program
+                    System.out.println("Exiting program.");
+                    scanner.close();
+                    return;
 
+                default:
+                    // Handle invalid choice
+                    System.out.println("Invalid Input. Please try again.");
+            }
+        }
+    }
 }

@@ -159,8 +159,8 @@ public class InventoryRequisitionFormService {
 	 * form. Also it adds this list into IRAppriovalMap where key is generated
 	 * inventoryRequsitionNumber
 	 */
-	public void manageIRF() {
-		Scanner input = new Scanner(System.in);
+	public void manageIRF(Scanner input) {
+		
 		while (true) {
 			System.out.println("Enter the following details to raise Inventory Requisition");
 			takeDataForInventoryRequistionForm(input);
@@ -191,7 +191,6 @@ public class InventoryRequisitionFormService {
 			}
 		}
 		approveRequsitionForm(input);
-		input.close();
 	}
 
 	/**
@@ -215,6 +214,5 @@ public class InventoryRequisitionFormService {
 				System.out.println("Form has been rejected");
 			}
 		}
-		input.close();
 	}
 }
