@@ -159,4 +159,8 @@ public class Product {
 		this.issueDate = issueDate;
 	}
 
+	public Product() {
+		// TODO Auto-generated constructor stub
+	}
+
 }
