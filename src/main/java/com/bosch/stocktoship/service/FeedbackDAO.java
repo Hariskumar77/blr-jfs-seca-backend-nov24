@@ -1,5 +1,7 @@
 package com.bosch.stocktoship.service;
- 
+/**
+ * @author HWE1COB
+ * */ 
 import java.sql.*;
 import com.bosch.stocktoship.repository.DBConnection;
  
