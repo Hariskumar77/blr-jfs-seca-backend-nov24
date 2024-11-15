@@ -3,6 +3,8 @@ package com.bosch.stocktoship;
 import org.junit.jupiter.api.AfterEach;  // JUnit 5 annotation for teardown method
 import org.junit.jupiter.api.BeforeEach; // JUnit 5 annotation for setup method
 import org.junit.jupiter.api.Test;      // JUnit 5 annotation for test methods
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.io.*;
 import java.util.Date;
 
@@ -15,6 +17,7 @@ import com.bosch.stocktoship.service.Accountant;
 import com.bosch.stocktoship.service.StoreManager;
 
 // created by Aman Kumar
+@SpringBootTest
 public class PaymentTest {
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
