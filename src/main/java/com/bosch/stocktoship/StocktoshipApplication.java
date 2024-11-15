@@ -1,7 +1,6 @@
 package com.bosch.stocktoship;
 
 import org.springframework.boot.SpringApplication;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.bosch.stocktoship.entity.Invoice;
