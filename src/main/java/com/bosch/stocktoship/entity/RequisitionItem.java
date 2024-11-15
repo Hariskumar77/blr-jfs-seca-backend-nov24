@@ -7,6 +7,8 @@ package com.bosch.stocktoship.entity;
  * */
 
 public class RequisitionItem {
+	
+	public int pr_number;
     public String itemCode;
     public String purposeDescription;
     public int quantity;
@@ -19,7 +21,23 @@ public class RequisitionItem {
     public RequisitionItem() {
 	
 	}
-    public RequisitionItem(String itemCode, String purposeDescription, int quantity, String unit, String department, String companyMake) {
+    
+    
+    public RequisitionItem(int pr_number, String itemCode, String purposeDescription, int quantity, String unit,
+			String department, String companyMake, String approvalStatus) {
+		super();
+		this.pr_number = pr_number;
+		this.itemCode = itemCode;
+		this.purposeDescription = purposeDescription;
+		this.quantity = quantity;
+		this.unit = unit;
+		this.department = department;
+		this.companyMake = companyMake;
+		this.approvalStatus = approvalStatus;
+	}
+
+
+	public RequisitionItem(String itemCode, String purposeDescription, int quantity, String unit, String department, String companyMake) {
         this.itemCode = itemCode;
         this.purposeDescription = purposeDescription;
         this.quantity = quantity;
@@ -30,10 +48,17 @@ public class RequisitionItem {
     }
 
     //Getter Setter Methods
+	
+	
     public String getItemCode() {
 		return itemCode;
 	}
 
+
+	public int getPr_number() {
+		return pr_number;
+	}
+	
 
 	public String getPurposeDescription() {
 		return purposeDescription;
@@ -69,6 +94,11 @@ public class RequisitionItem {
 	}
 
 
+	public void setPr_number(int pr_number) {
+		this.pr_number = pr_number;
+	}
+
+	
 	public void setPurposeDescription(String purposeDescription) {
 		this.purposeDescription = purposeDescription;
 	}

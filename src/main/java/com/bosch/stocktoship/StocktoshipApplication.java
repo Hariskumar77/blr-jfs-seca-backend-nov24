@@ -9,17 +9,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.bosch.stocktoship.entity.*;
 import com.bosch.stocktoship.service.*;
+
+import java.sql.SQLException;
 import java.util.*;
 @SpringBootApplication
 public class StocktoshipApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		SpringApplication.run(StocktoshipApplication.class, args);
 		Scanner scanner = new Scanner(System.in);
 		
 //      Enter PR details
 
         PurchaseRequisition pr = null;
+        
+        String prNo = null;
 
         System.out.print("Item Code: ");
         String itemCode = scanner.nextLine();
@@ -50,9 +54,15 @@ public class StocktoshipApplication {
         	System.out.print("\nType SUBMIT to Submit the PR");
 	        submitResponse = scanner.nextLine();
 		    if (submitResponse.equalsIgnoreCase("submit")) {
-		        pr.submitPR();
+		        pr.submitPR(prNo);
+		        
+		        // Passing the item details to DAO class to store in DB
+		        PurchaseRequisitioinDAO pDao = new PurchaseRequisitioinDAO();
+		        RequisitionItem rItem =  new RequisitionItem(itemCode, purposeDescription, quantity, unit, department, companyMake);
+		       prNo = pDao.createPurchaseRequisitionAndGetPrNo(rItem);
+		        
 	    //Process approval and move items to departments
-		        pr.processApproval();
+		        pr.processApproval(prNo);
 		    } else {
 		        System.out.println("PR not submitted.");
 		    }
@@ -65,7 +75,7 @@ public class StocktoshipApplication {
 			
 		System.out.println("\n*****************Material requisition and Purchase Order Module*****************\n");
 		
-		String prNo;
+		System.out.println("the generated PR number from DB is "+ prNo);
 		
 		RequisitionItem item = new RequisitionItem();
 		System.out.println("Enter the PR number ");

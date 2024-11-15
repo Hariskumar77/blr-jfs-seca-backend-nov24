@@ -5,9 +5,10 @@ package com.bosch.stocktoship.service;
  *  @author Varun Joshi VJO3KOR
  *  
  * */
-import com.bosch.stocktoship.entity.*; 
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.bosch.stocktoship.entity.RequisitionItem;
 
 public class PurchaseRequisition {
     static int PRCounter = 10000;
@@ -46,10 +47,10 @@ public class PurchaseRequisition {
 	
 	// Submitting PR
 	
-    public void submitPR() {
+    public void submitPR(String prNo) {
         if (!isSubmitted) {
             isSubmitted = true;
-            System.out.println("PR Submitted Successfully! PR Number: " + prNumber);
+            System.out.println("PR Submitted Successfully! PR Number: " + prNo);
         } else {
             System.out.println("PR already submitted.");
         }
@@ -65,13 +66,15 @@ public class PurchaseRequisition {
 
     //Processing Approval of PR
     
-    public void processApproval() {
-        System.out.println("\nProcessing approval...");
+    public void processApproval(String prNo) {
+        
+    	System.out.println("\nProcessing approval...");
+    	
         for (String prn : prnMap.keySet()) {
             if (prnMap.get(prn).approvalStatus.equals("Approved")) {
-                System.out.println("PR number " + prn + " directly moves to the Purchase Department.");
+                System.out.println("PR number " + prNo + " directly moves to the Purchase Department.");
             } else {
-                System.out.println("PR number " + prn + " requires 2nd and 3rd level approval.");
+                System.out.println("PR number " + prNo + " requires 2nd and 3rd level approval.");
             }
         }
     }

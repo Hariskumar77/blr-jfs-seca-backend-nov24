@@ -97,16 +97,16 @@ public class RequisitionAndPurchaseRequisitionTest {
  
     @Test
     public void testPurchaseRequisitionSubmitPR() {
-        pr.submitPR();  // Submit the PR
+        pr.submitPR(null);  // Submit the PR
         assertTrue(pr.isSubmitted());  // Ensure PR is marked as submitted
  
-        pr.submitPR();  // Try submitting again
+        pr.submitPR(null);  // Try submitting again
         assertTrue(pr.isSubmitted()); 
     }
  
     @Test
     public void testPurchaseRequisitionProcessApproval() {
-        pr.processApproval();  // Process approval for approved item
+        pr.processApproval(null);  // Process approval for approved item
         // Check correct approval message for approved item
         assertEquals("Approved", PurchaseRequisition.prnMap.get(pr.getPRNumber()).getApprovalStatus());
     }
@@ -115,7 +115,7 @@ public class RequisitionAndPurchaseRequisitionTest {
     public void testPurchaseRequisitionProcessApprovalWithNeedApproval() {
         item.setQuantity(60);  // Set quantity to a value that needs approval
         item.updateApprovalStatus();  // Update approval status based on quantity
-        pr.processApproval();  // Process approval for item
+        pr.processApproval(null);  // Process approval for item
         assertEquals("Need Approval", PurchaseRequisition.prnMap.get(pr.getPRNumber()).getApprovalStatus());  // Ensure correct message for items requiring approval
     }
  
@@ -138,15 +138,15 @@ public class RequisitionAndPurchaseRequisitionTest {
         RequisitionItem item2 = new RequisitionItem("XYZ456", "Monitor", 40, "Piece", "IT", "XYZ Corp");
         PurchaseRequisition pr2 = new PurchaseRequisition(item2);
  
-        pr.submitPR();  // Submit the first PR
-        pr2.submitPR();  // Submit the second PR
+        pr.submitPR(null);  // Submit the first PR
+        pr2.submitPR(null);  // Submit the second PR
  
         assertTrue(pr.isSubmitted());  // Ensure both PRs are marked as submitted
         assertTrue(pr2.isSubmitted());
  
         // Check that both PR submission messages were printed
-        pr.submitPR();
-        pr2.submitPR();
+        pr.submitPR(null);
+        pr2.submitPR(null);
 
         assertTrue(pr.isSubmitted());
         assertTrue(pr2.isSubmitted());// Verify both submissions were printed

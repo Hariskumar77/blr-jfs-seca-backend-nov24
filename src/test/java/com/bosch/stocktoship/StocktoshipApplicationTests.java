@@ -33,11 +33,11 @@ class StocktoshipApplicationTests {
     public void testSubmitAndApprovePurchaseRequisition() {
         // Test the PR submission
         assertNotNull(pr);
-        pr.submitPR();
+        pr.submitPR(null);
         assertTrue(pr.isSubmitted());
 
         // Test the approval process
-        pr.processApproval();
+        pr.processApproval(null);
         assertEquals("Approved", PurchaseRequisition.prnMap.get(pr.getPRNumber()).getApprovalStatus());
     }
 
