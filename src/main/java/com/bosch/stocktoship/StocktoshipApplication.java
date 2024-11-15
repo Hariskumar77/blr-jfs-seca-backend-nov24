@@ -1,47 +1,53 @@
 package com.bosch.stocktoship;
-
+ 
+ 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
+ 
 import com.bosch.stocktoship.entity.PartDetails;
 import com.bosch.stocktoship.entity.SampleDetails;
+import com.bosch.stocktoship.repository.DBConnection;
+import com.bosch.stocktoship.service.FeedbackDAO;
 import com.bosch.stocktoship.service.PartDetailsDAO;
 import com.bosch.stocktoship.service.SampleDetailsDAO;
-
+ 
 public class StocktoshipApplication {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		Scanner scanner = new Scanner(System.in);
 		PartDetails partDetails = new PartDetails();
 		PartDetailsDAO partDetailsDAO = new PartDetailsDAO();
 		SampleDetailsDAO sampleDetailsDAO = new SampleDetailsDAO();
+		FeedbackDAO feedbackDAO = new FeedbackDAO();
 		List<SampleDetails> sampleDetailsList = new ArrayList<>();
-
+ 
 		System.out.println("Select the stage:");
 		System.out.println("1. Stamping\n2. Blanking\n3. Welding\n4. Painting\n5. Assembling");
-
+ 
 		int stageChoice = scanner.nextInt();
 		scanner.nextLine();
-
-		System.out.print("Enter the number of samples: ");
+ 
+		System.out.println("Enter the number of samples: ");
 		int samples = scanner.nextInt();
 		scanner.nextLine();
-
-		System.out.print("Enter the part number: ");
+ 
+		System.out.println("Enter the part number: ");
 		int partNumber = scanner.nextInt();
 		scanner.nextLine();
-        System.out.println();
+ 
 		partDetails.setPartNumber(partNumber);
-
+ 
 		boolean exitStage = false;
 		while (!exitStage) {
-			System.out.println(
-					"Options: 1. Enter Data 2. Edit Data 3. Delete Data 4. Save 5. Submit 6. Display 7. Exit Stage");
+			System.out.println("Options: 1. Enter Data 2. Edit Data 3. Delete Data 4. Save 5. Submit 6.Display 7. Enter Feedback 8. Display BOM 9. Exit Stage");
 			System.out.print("Choose an option: ");
 			int option = scanner.nextInt();
 			scanner.nextLine();
-
+ 
 			switch (option) {
 			case 1:
 				switch (stageChoice) {
@@ -81,9 +87,9 @@ public class StocktoshipApplication {
 				int sampleToDelete = scanner.nextInt();
 				scanner.nextLine();
 				int deleted = sampleDetailsDAO.deleteSampleDetails(sampleToDelete);
-				if (deleted == 1) {
+				if(deleted == 1) {
 					System.out.println("Deleted successfully!!");
-				} else {
+				}else {
 					System.out.println("Sample details is not available");
 				}
 				break;
@@ -99,20 +105,26 @@ public class StocktoshipApplication {
 				System.out.println("Displaying details: ");
 				List<SampleDetails> sampleDetailsDisplay = new ArrayList<SampleDetails>();
 				sampleDetailsDisplay = sampleDetailsDAO.getAllSampleDetails();
-				for (SampleDetails s : sampleDetailsDisplay) {
-					System.out.print(s.getSampleId() + " ");
+				for(SampleDetails s: sampleDetailsDisplay) {
+					System.out.println(s.getSampleId());
 					System.out.println(s.getStageName());
 				}
 				break;
 			case 7:
-				exitStage = true;
-				break;
+				enterFeedback(scanner, feedbackDAO, partDetailsDAO, sampleDetailsDAO);
+                break;
+			case 8:
+                displayBOM(feedbackDAO);
+                break;
+            case 9:
+                exitStage = true;
+                break;
 			default:
 				System.out.println("Invalid option. Try again.");
 			}
 		}
 	}
-
+ 
 	private static void handleStampingStage(int samples, Scanner scanner, PartDetails partDetails,
 			List<SampleDetails> sampleDetailsList) {
 		for (int i = 0; i < samples; i++) {
@@ -128,7 +140,7 @@ public class StocktoshipApplication {
 			sampleDetailsList.add(sampleDetails);
 		}
 	}
-
+ 
 	private static void handleBlankingStage(int samples, Scanner scanner, PartDetails partDetails,
 			List<SampleDetails> sampleDetailsList) {
 		for (int i = 0; i < samples; i++) {
@@ -156,7 +168,7 @@ public class StocktoshipApplication {
 			sampleDetailsList.add(sampleDetails);
 		}
 	}
-
+ 
 	private static void handleWeldingStage(int samples, Scanner scanner, PartDetails partDetails,
 			List<SampleDetails> sampleDetailsList) {
 		for (int i = 0; i < samples; i++) {
@@ -174,7 +186,7 @@ public class StocktoshipApplication {
 			sampleDetailsList.add(sampleDetails);
 		}
 	}
-
+ 
 	private static void handlePaintingStage(int samples, Scanner scanner, PartDetails partDetails,
 			List<SampleDetails> sampleDetailsList) {
 		for (int i = 0; i < samples; i++) {
@@ -190,7 +202,7 @@ public class StocktoshipApplication {
 			sampleDetailsList.add(sampleDetails);
 		}
 	}
-
+ 
 	private static void handleAssemblingStage(int samples, Scanner scanner, PartDetails partDetails,
 			List<SampleDetails> sampleDetailsList) {
 		for (int i = 0; i < samples; i++) {
@@ -205,7 +217,7 @@ public class StocktoshipApplication {
 			sampleDetailsList.add(sampleDetails);
 		}
 	}
-
+ 
 	private static void editSampleData(SampleDetails sampleDetails, Scanner scanner) {
 		System.out.println("Editing data for sample ID: " + sampleDetails.getSampleId());
 		System.out.println("Select the field to edit:");
@@ -252,7 +264,7 @@ public class StocktoshipApplication {
 		}
 		System.out.println("Sample data updated.");
 	}
-
+ 
 	private static void handleBlankingEdit(int choice, SampleDetails sampleDetails, Scanner scanner) {
 		switch (choice) {
 		case 1:
@@ -287,7 +299,7 @@ public class StocktoshipApplication {
 			System.out.println("Invalid option selected.");
 		}
 	}
-
+ 
 	private static void handleWeldingEdit(int choice, SampleDetails sampleDetails, Scanner scanner) {
 		switch (choice) {
 		case 1:
@@ -306,7 +318,7 @@ public class StocktoshipApplication {
 			System.out.println("Invalid option selected.");
 		}
 	}
-
+ 
 	private static void handlePaintingEdit(int choice, SampleDetails sampleDetails, Scanner scanner) {
 		switch (choice) {
 		case 1:
@@ -321,7 +333,7 @@ public class StocktoshipApplication {
 			System.out.println("Invalid option selected.");
 		}
 	}
-
+ 
 	private static void handleAssemblingEdit(int choice, SampleDetails sampleDetails, Scanner scanner) {
 		switch (choice) {
 		case 1:
@@ -336,5 +348,118 @@ public class StocktoshipApplication {
 			System.out.println("Invalid option selected.");
 		}
 	}
-
+	private static void enterFeedback(Scanner scanner, FeedbackDAO feedbackDAO, PartDetailsDAO partDetailsDAO, SampleDetailsDAO sampleDetailsDAO) throws ClassNotFoundException, SQLException {
+        System.out.print("Enter part number: ");
+        int partNumber = scanner.nextInt();
+        scanner.nextLine();
+ 
+        PartDetails partDetails = partDetailsDAO.getPartDetails(partNumber);
+        if (partDetails == null) {
+            System.out.println("Part number not found.");
+            return;
+        }
+ 
+        System.out.println("Part Description: " + partDetails.getPartDescription());
+ 
+        List<SampleDetails> sampleDetailsList = sampleDetailsDAO.getSamplesByPartNumber(partNumber);
+        if (sampleDetailsList.isEmpty()) {
+            System.out.println("No samples found for this part number.");
+            return;
+        }
+ 
+        System.out.println("Available samples for Part Number " + partNumber + ":");
+        for (SampleDetails sample : sampleDetailsList) {
+            System.out.println("Sample ID: " + sample.getSampleId() + ", Stage Name: " + sample.getStageName());
+        }
+ 
+        System.out.print("Enter sample ID: ");
+        int sampleID = scanner.nextInt();
+        scanner.nextLine();
+ 
+        SampleDetails selectedSample = sampleDetailsList.stream()
+                .filter(sample -> sample.getSampleId() == sampleID)
+                .findFirst()
+                .orElse(null);
+ 
+        if (selectedSample == null) {
+            System.out.println("Invalid Sample ID.");
+            return;
+        }
+        String partDescription = feedbackDAO.getPartDescription(partNumber, sampleID);
+        if (partDescription == null) {
+            System.out.println("No part description found for the given part number and sample ID.");
+            return;
+        }
+        System.out.println("Part Description: " + partDescription);
+ 
+        System.out.print("Enter feedback type (QA Failed / Meet the Requirements): ");
+        String feedbackType = scanner.nextLine();
+ 
+        String defectType = null;
+        if ("QA Failed".equalsIgnoreCase(feedbackType)) {
+           
+            System.out.print("Enter defect type (Dimensional Error, Defective Part, Missing Part): ");
+            defectType = scanner.nextLine();
+ 
+            
+            if (!defectType.equalsIgnoreCase("Dimensional Error") &&
+                !defectType.equalsIgnoreCase("Defective Part") &&
+                !defectType.equalsIgnoreCase("Missing Part")) {
+                System.out.println("Invalid defect type. Please enter a valid defect type.");
+                return;
+            }
+        } else if ("Meet the Requirements".equalsIgnoreCase(feedbackType)) {
+           
+            defectType = null;
+        } else {
+            
+            System.out.println("Invalid feedback type. Please enter either 'QA Failed' or 'Meet the Requirements'.");
+            return;
+        }
+ 
+        System.out.print("Enter remarks: ");
+        String remarks = scanner.nextLine();
+ 
+        boolean feedbackInserted = feedbackDAO.insertFeedback(partNumber, sampleID, partDescription,feedbackType, defectType, remarks);
+        if (feedbackInserted) {
+            System.out.println("Feedback added successfully!");
+        } else {
+            System.out.println("Failed to add feedback. Check if part number and sample ID are valid.");
+        }
+        
+    }
+	 private static void displayBOM(FeedbackDAO feedbackDAO) {
+	        System.out.println("Displaying BOM...");
+ 
+	       
+	        String bomQuery = feedbackDAO.getBOMQuery();
+ 
+	        try (Connection conn = DBConnection.getConnection();
+	             Statement stmt = conn.createStatement();
+	             ResultSet rs = stmt.executeQuery(bomQuery)) {
+ 
+	            System.out.printf("%-15s%-25s%-25s%-15s%-20s%-15s%-15s\n",
+	                    "Part Number", "Part Name", "Part Description", "Sample ID",
+	                    "Stage Name", "Feedback Type", "Defect Type");
+ 
+	            while (rs.next()) {
+	                String partNumber = rs.getString("partNumber");
+	                String partName = rs.getString("partName");
+	                String partDescription = rs.getString("partDescription");
+	                String sampleID = rs.getString("sampleID");
+	                String stageName = rs.getString("stageName");
+	                String feedbackType = rs.getString("feedbackType");
+	                String defectType = rs.getString("defectType");
+ 
+	                
+	                System.out.printf("%-15s%-25s%-25s%-15s%-20s%-15s%-15s\n",
+	                        partNumber, partName, partDescription, sampleID,
+	                        stageName, feedbackType, defectType);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+ 
+ 
 }

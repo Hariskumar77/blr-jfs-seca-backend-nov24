@@ -176,4 +176,23 @@ public class SampleDetailsDAO {
 			return preparedStatement.executeUpdate();
 		}
 	}
+	private static final String GET_SAMPLES_BY_PART_NUMBER_QUERY = "SELECT * FROM sample_details WHERE part_number = ?";
+	 
+	public List<SampleDetails> getSamplesByPartNumber(int partNumber) throws SQLException, ClassNotFoundException {
+	    List<SampleDetails> sampleDetailsList = new ArrayList<>();
+ 
+	    try (Connection connection = DBConnection.getConnection();
+	         PreparedStatement preparedStatement = connection.prepareStatement(GET_SAMPLES_BY_PART_NUMBER_QUERY)) {
+ 
+	        preparedStatement.setInt(1, partNumber);
+ 
+	        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	            while (resultSet.next()) {
+	                SampleDetails sampleDetails = mapResultSetToSampleDetails(resultSet);
+	                sampleDetailsList.add(sampleDetails);
+	            }
+	        }
+	    }
+	    return sampleDetailsList;
+	}
 }
