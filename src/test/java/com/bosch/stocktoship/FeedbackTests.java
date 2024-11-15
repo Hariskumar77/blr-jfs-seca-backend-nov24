@@ -1,6 +1,7 @@
 package com.bosch.stocktoship;
 /**
-* @author DLA3KOR */
+  * @author HWE1COB
+  * */
  
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
