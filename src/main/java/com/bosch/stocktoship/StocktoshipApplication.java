@@ -9,6 +9,9 @@ package com.bosch.stocktoship;
 import java.sql.SQLException;
 import java.util.*;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.bosch.stocktoship.entity.RequisitionItem;
 import com.bosch.stocktoship.entity.Supplier;
 import com.bosch.stocktoship.service.MaterialRequisition;
@@ -17,10 +20,11 @@ import com.bosch.stocktoship.service.PurchaseOrderDAO;
 import com.bosch.stocktoship.service.PurchaseRequisitioinDAO;
 import com.bosch.stocktoship.service.PurchaseRequisition;
 
-
+@SpringBootApplication
 public class StocktoshipApplication {
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
+    	SpringApplication.run(StocktoshipApplication.class, args);
         // Initialize Scanner and DAO
         Scanner scanner = new Scanner(System.in);
         PurchaseOrderDAO poDAO = new PurchaseOrderDAO();
