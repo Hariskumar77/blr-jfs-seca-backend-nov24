@@ -1,48 +1,72 @@
 package com.bosch.stocktoship.entity;
 
-
-
-/**
-
-* Represents a location in the storage with a specific rack and shelf.
-
-* AUTHOR: AYUSH ARYA(YYA2COB)
-
-*/
-
 public class Location {
+	/**
+	 * @AUTHOR: CHARUL SAINI (SIC2COB)
+	 */
+	int id;
+	int rack;
+	int shelf;
+	String productCode;
+	int capacity;
+	int quantity;
 
-	// Rack and shelf identifiers for the location
-
-	private int rack;
-
-	private int shelf;
-
-	// Constructor to initialize rack and shelf
-
-	public Location(int rack, int shelf) {
-
-		this.rack = rack;
-
-		this.shelf = shelf;
-
+	public int getId() {
+		return id;
 	}
 
-	// Getter for the shelf number
-
-	public int getShelf() {
-
-		return shelf;
-
+	public void setId(int id) {
+		this.id = id;
 	}
-
-	// Getter for the rack number
 
 	public int getRack() {
-
 		return rack;
+	}
 
+	public void setRack(int rack) {
+		this.rack = rack;
+	}
+
+	public int getShelf() {
+		return shelf;
+	}
+
+	public void setShelf(int shelf) {
+		this.shelf = shelf;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public Location(int rack, int shelf) {
+		super();
+		this.rack = rack;
+		this.shelf = shelf;
+	}
+
+	public Location() {
+		super();
 	}
 
 }
- 
