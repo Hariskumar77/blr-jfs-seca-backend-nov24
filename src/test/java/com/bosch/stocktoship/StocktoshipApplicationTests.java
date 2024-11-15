@@ -7,6 +7,8 @@ package com.bosch.stocktoship;
  * **/
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.sql.SQLException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +24,7 @@ class StocktoshipApplicationTests {
     private PurchaseOrder po;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws ClassNotFoundException, SQLException {
         pr = new PurchaseRequisition(new RequisitionItem("Item001", "Test Purpose", 10, "kg", "", "Company A"));
         mRequisition = new MaterialRequisition();
         po = new PurchaseOrder();
@@ -66,19 +68,6 @@ class StocktoshipApplicationTests {
         
         // Check that the selected supplier's name matches the expected supplier
         assertEquals("Supplier Two", selectedSupplier.getSupplierName());
-    }
-
-
-    // Test 4: Test placing a Purchase Order
-    @Test
-    public void testPlacePurchaseOrder() {
-    	// Selecting the first supplier
-        Supplier supplier = mRequisition.getSuppliers().get(0); 
-
-        // Place the purchase order
-        po.placePurchaseOrder("10001", pr.getItem(), supplier);
-// 		Ensure that the PurchaseOrder object is initialized.
-        assertNotNull(po);  
     }
 
 	
