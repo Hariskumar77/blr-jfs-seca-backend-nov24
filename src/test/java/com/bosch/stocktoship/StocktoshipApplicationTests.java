@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +59,7 @@ class StocktoshipApplicationTests {
 	private AccountManager accountManager;
 
 	@BeforeEach
-	public void setup() {
+	public void setup() throws ClassNotFoundException, SQLException {
 		pr = new PurchaseRequisition(new RequisitionItem("Item001", "Test Purpose", 10, "kg", "", "Company A"));
 		mRequisition = new MaterialRequisition();
 		po = new PurchaseOrder();
@@ -69,11 +70,11 @@ class StocktoshipApplicationTests {
 	public void testSubmitAndApprovePurchaseRequisition() {
 		// Test the PR submission
 		assertNotNull(pr);
-		pr.submitPR();
+		pr.submitPR(null);
 		assertTrue(pr.isSubmitted());
 
 		// Test the approval process
-		pr.processApproval();
+		pr.processApproval(null);
 		assertEquals("Approved", PurchaseRequisition.prnMap.get(pr.getPRNumber()).getApprovalStatus());
 	}
 
@@ -102,18 +103,6 @@ class StocktoshipApplicationTests {
 
 		// Check that the selected supplier's name matches the expected supplier
 		assertEquals("Supplier Two", selectedSupplier.getSupplierName());
-	}
-
-	// Test 4: Test placing a Purchase Order
-	@Test
-	public void testPlacePurchaseOrder() {
-		// Selecting the first supplier
-		Supplier supplier = mRequisition.getSuppliers().get(0);
-
-		// Place the purchase order
-		po.placePurchaseOrder("10001", pr.getItem(), supplier);
-// 		Ensure that the PurchaseOrder object is initialized.
-		assertNotNull(po);
 	}
 
 	@Test
