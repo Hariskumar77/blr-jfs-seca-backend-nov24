@@ -1,118 +1,166 @@
 package com.bosch.stocktoship.entity;
-import java.util.List;
-/***
-* Represents a Product with various details including dimensions, supplier info,
-* and assigned storage locations.
-* AUTHOR: AYUSH ARYA(YYA2COB)
-***/
+
+import java.util.Date;
+
 public class Product {
-	// Product attributes including dimensions, supplier information, and storage details
-	private String name, code, batch, supplierName, location, orderNo, poDate, deliveryDate;
-	private String length, breadth, height, weight, quantity;
-	private List<Location> locationList;  // List of storage locations for the product
-	// Default constructor
-	public Product() {
-	}
-	// Constructor to initialize product attributes
-	public Product(String name, String code, String batch, String length, String breadth, String height, String weight,
-			String quantity, String supplierName, String location, String orderNo, String poDate, String deliveryDate) {
-		this.name = name;
-		this.code = code;
-		this.batch = batch;
-		this.length = length;
-		this.breadth = breadth;
-		this.height = height;
-		this.weight = weight;
-		this.quantity = quantity;
-		this.supplierName = supplierName;
-		this.location = location;
-		this.orderNo = orderNo;
-		this.poDate = poDate;
-		this.deliveryDate = deliveryDate;
-	}
-	// Getters and setters for each attribute
+	/**
+	 * @AUTHOR: CHARUL SAINI (SIC2COB)
+	 */
+
+	String name, supplierName, supplierLocation;
+	String code;
+	Integer batch;
+	Integer length;
+	Integer breadth;
+	Integer height, weight, quantity, orderNo, volume;
+	Date deliveryDate, issueDate;
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-	public String getBatch() {
-		return batch;
-	}
-	public void setBatch(String batch) {
-		this.batch = batch;
-	}
+
 	public String getSupplierName() {
 		return supplierName;
 	}
+
 	public void setSupplierName(String supplierName) {
 		this.supplierName = supplierName;
 	}
-	public String getLocation() {
-		return location;
+
+	public String getSupplierLocation() {
+		return supplierLocation;
 	}
-	public void setLocation(String location) {
-		this.location = location;
+
+	public void setSupplierLocation(String supplierLocation) {
+		this.supplierLocation = supplierLocation;
 	}
-	public String getOrderNo() {
-		return orderNo;
+
+	public String getCode() {
+		return code;
 	}
-	public void setOrderNo(String orderNo) {
-		this.orderNo = orderNo;
+
+	public void setCode(String code) {
+		this.code = code;
 	}
-	public String getPoDate() {
-		return poDate;
+
+	public Integer getBatch() {
+		return batch;
 	}
-	public void setPoDate(String poDate) {
-		this.poDate = poDate;
+
+	public void setBatch(Integer batch) {
+		this.batch = batch;
 	}
-	public String getDeliveryDate() {
-		return deliveryDate;
-	}
-	public void setDeliveryDate(String deliveryDate) {
-		this.deliveryDate = deliveryDate;
-	}
-	public String getLength() {
+
+	public Integer getLength() {
 		return length;
 	}
-	public void setLength(String length) {
+
+	public void setLength(Integer length) {
 		this.length = length;
 	}
-	public String getBreadth() {
+
+	public Integer getBreadth() {
 		return breadth;
 	}
-	public void setBreadth(String breadth) {
+
+	public void setBreadth(Integer breadth) {
 		this.breadth = breadth;
 	}
-	public String getHeight() {
+
+	public Integer getHeight() {
 		return height;
 	}
-	public void setHeight(String height) {
+
+	public void setHeight(Integer height) {
 		this.height = height;
 	}
-	public String getWeight() {
+
+	public Integer getWeight() {
 		return weight;
 	}
-	public void setWeight(String weight) {
+
+	public void setWeight(Integer weight) {
 		this.weight = weight;
 	}
-	public String getQuantity() {
+
+	public Integer getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(String quantity) {
+
+	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
-	public List<Location> getLocationList() {
-		return locationList;
+
+	public Integer getOrderNo() {
+		return orderNo;
 	}
-	public void setLocationList(List<Location> locationList) {
-		this.locationList = locationList;
+
+	public void setOrderNo(Integer orderNo) {
+		this.orderNo = orderNo;
 	}
+
+	public Integer getVolume() {
+		return volume;
+	}
+
+	public void setVolume(Integer volume) {
+		this.volume = volume;
+	}
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+
+	public Date getIssueDate() {
+		return issueDate;
+	}
+
+	public void setIssueDate(Date issueDate) {
+		this.issueDate = issueDate;
+	}
+
+	public Product(String name, String supplierName, String supplierLocation, String code, Integer batch,
+			Integer length, Integer breadth, Integer height, Integer weight, Integer quantity, Integer orderNo,
+			Integer volume, Date deliveryDate, Date issueDate) {
+		super();
+		this.name = name;
+		this.supplierName = supplierName;
+		this.supplierLocation = supplierLocation;
+		this.code = code;
+		this.batch = batch;
+		this.length = length;
+		this.breadth = breadth;
+		this.height = height;
+		this.weight = weight;
+		this.quantity = quantity;
+		this.orderNo = orderNo;
+		this.volume = volume;
+		this.deliveryDate = deliveryDate;
+		this.issueDate = issueDate;
+	}
+
+	public Product(String supplierName, String supplierLocation, Integer batch, Integer quantity, Integer orderNo,
+			Date deliveryDate, Date issueDate) {
+		super();
+		this.supplierName = supplierName;
+		this.supplierLocation = supplierLocation;
+		this.batch = batch;
+		this.quantity = quantity;
+		this.orderNo = orderNo;
+		this.deliveryDate = deliveryDate;
+		this.issueDate = issueDate;
+	}
+
+	public Product() {
+		// TODO Auto-generated constructor stub
+	}
+
 }

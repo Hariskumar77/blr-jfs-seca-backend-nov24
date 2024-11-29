@@ -1,5 +1,7 @@
 package com.bosch.stocktoship;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -9,14 +11,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.bosch.stocktoship.entity.Invoice;
 import com.bosch.stocktoship.entity.ItemCodeGeneration;
+import com.bosch.stocktoship.entity.Location;
+import com.bosch.stocktoship.entity.Product;
 import com.bosch.stocktoship.entity.RequisitionItem;
+import com.bosch.stocktoship.entity.Robot;
 import com.bosch.stocktoship.entity.Supplier;
 import com.bosch.stocktoship.service.AccountManager;
 import com.bosch.stocktoship.service.Accountant;
 import com.bosch.stocktoship.service.ApplicationData;
 import com.bosch.stocktoship.service.BOMMain;
-import com.bosch.stocktoship.service.InboundRequisition;
+import com.bosch.stocktoship.service.DeliveryDepartmentDAO;
+import com.bosch.stocktoship.service.InboundRequisitionForm;
 import com.bosch.stocktoship.service.InventoryRequisitionFormService;
+import com.bosch.stocktoship.service.LocationAnalayzer;
+import com.bosch.stocktoship.service.LocationDAO;
 import com.bosch.stocktoship.service.MaterialRequisition;
 import com.bosch.stocktoship.service.OutboundRequisitionForm;
 import com.bosch.stocktoship.service.PurchaseOrder;
@@ -26,14 +34,14 @@ import com.bosch.stocktoship.service.StoreManager;
 
 @SpringBootApplication
 public class StocktoshipApplication {
+	static Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         SpringApplication.run(StocktoshipApplication.class, args);
 
         ApplicationData app = new ApplicationData(); // Create an instance of the Application class
         app.start();
 
-        Scanner scanner = new Scanner(System.in);
 
         // Main loop to display the menu after each task is completed
         while (true) {
@@ -58,12 +66,10 @@ public class StocktoshipApplication {
 
                     if (managementChoice == 1) {
                         // Inbound Management
-                        InboundRequisition inboundRequisition = new InboundRequisition();
-                        inboundRequisition.inboundMgmt();
+                    	inboundManagement();
                     } else if (managementChoice == 2) {
                         // Outbound Management
-                        OutboundRequisitionForm outboundRequisitionForm = new OutboundRequisitionForm();
-                        outboundRequisitionForm.displayDetails();
+                    	outboundManagement();
                     } else {
                         System.out.println("Invalid Input");
                     }
@@ -282,4 +288,136 @@ public class StocktoshipApplication {
             }
         }
     }
+    
+ // Method for handling Inbound Management logic
+ 	public static void inboundManagement() throws Exception {
+
+ 		// Initialize DAO for location and insert location details
+ 		LocationDAO locationDAO = new LocationDAO();
+ 		locationDAO.insertLocationDetails();
+
+ 		// Display and process inbound requisition form
+ 		System.out.println("\nINBOUND REQUISITION FORM");
+ 		System.out.println("\nEnter product Code");
+ 		String productCode = scanner.nextLine();
+
+ 		// Initialize InboundRequisitionForm and fetch or create product details
+ 		Product product;
+ 		InboundRequisitionForm inboundRequisitionForm = new InboundRequisitionForm();
+ 		ResultSet resultSet = inboundRequisitionForm.getProductByCode(productCode);
+
+ 		// If product does not exist, create new product; otherwise, update existing product
+ 		if (!resultSet.next()) {
+ 			product = inboundRequisitionForm.inputNewProductDetails(productCode);
+ 			inboundRequisitionForm.insertNewOrder(product);
+ 		} else {
+ 			product = inboundRequisitionForm.updateProductDetails(resultSet);
+ 			inboundRequisitionForm.insertNewOrder(product);
+ 		}
+
+ 		// Initialize LocationAnalayzer to fetch available locations for product placement
+ 		LocationAnalayzer locationAnalayzer = new LocationAnalayzer();
+ 		List<Location> locationList = locationAnalayzer.fetchLocation();
+
+ 		// Calculate the total volume of the product to be stored
+ 		int quantity = product.getQuantity();
+ 		int volume = product.getVolume();
+ 		int totalVolume = quantity * volume;
+
+ 		// Loop to find appropriate locations for storing the product
+ 		do {
+ 			System.out.println("\nEnter the location you want to check");
+
+ 			// Validate location input
+ 			int locationInput;
+ 			while ((locationInput = Integer.parseInt(scanner.nextLine())) > 8 && (locationInput < 0)) {
+ 				System.out.println("Invalid Input, please input again");
+ 			}
+
+ 			// Update location with product details and check if available space
+ 			boolean available = locationAnalayzer.updateProductCodeInLocation(locationList, product, quantity,
+ 					locationInput);
+ 			if (available) {
+ 				// Reduce quantity and volume after storing the product in a location
+ 				quantity -= (10000 / volume);
+ 				totalVolume -= (10000 / volume) * volume;
+ 			}
+
+ 		} while (totalVolume > 0);
+
+ 		// Proceed to outbound management once inbound management is completed
+ 		outboundManagement();
+ 	}
+
+ 	// Method for handling Outbound Management logic
+ 	static void outboundManagement() throws SQLException {
+ 		// Initialize DAO for DeliveryDepartment and insert department details
+ 		DeliveryDepartmentDAO deliveryDepartmentDAO = new DeliveryDepartmentDAO();
+ 		deliveryDepartmentDAO.insertDeliveryDepartmentDetails();
+
+ 		// Initialize OutboundRequisitionForm to handle outbound requisitions
+ 		OutboundRequisitionForm outboundRequisitionForm = new OutboundRequisitionForm();
+
+ 		// Display outbound requisition form and request product details
+ 		System.out.println("\nOUTBOUND REQUISITION FORM");
+ 		System.out.println("\nEnter the Product name : ");
+ 		String productName = scanner.nextLine();
+ 		System.out.println("\nEnter the Product code : ");
+ 		String productCode = scanner.nextLine();
+
+ 		// Fetch available departments for delivery
+ 		List<String> departmentList = outboundRequisitionForm.deliveryDeparments();
+
+ 		// Display department options and allow user to choose a department
+ 		System.out.print("\nSelect Delivery Department from the following list \n(");
+ 		for (int i = 0; i < departmentList.size(); i++) {
+ 			String department = departmentList.get(i);
+ 			System.out.print(department);
+ 			if (i < departmentList.size() - 1) {
+ 				System.out.print(", ");
+ 			}
+ 		}
+ 		System.out.println(")");
+ 		String deliveryDepartmentName = scanner.nextLine();
+ 		System.out.println("Delivery Department : " + deliveryDepartmentName);
+
+ 		// Get the delivery in-charge based on selected department
+ 		outboundRequisitionForm.getDeliveryInchargeBasedOnDepartmentName(deliveryDepartmentName);
+
+ 		// Fetch available product locations for the given product code
+ 		List<Location> locations = outboundRequisitionForm.getAvailableLocations(productCode);
+
+ 		// Handle the case when the product is not available
+ 		if (locations.isEmpty()) {
+ 			System.out.println("Product not available");
+ 		} else {
+ 			// Display available locations and allow the user to select a location
+ 			System.out.println("\nProduct with product code: " + productCode + " available at these locations:");
+ 			System.out.format("%-5s %s\n", "LocationID", "Rack and Shelf Details");
+ 			for (Location location : locations) {
+ 				System.out.format("%-5s %s\n", location.getId(),
+ 						"Rack " + location.getRack() + ",Shelf " + location.getShelf());
+ 			}
+
+ 			// Validate and select the product location
+ 			System.out.println("\nSelect the product locationId");
+ 			int selectedLocationId;
+ 			while (!outboundRequisitionForm.validLocation(locations, selectedLocationId = scanner.nextInt())) {
+ 				System.out.println("Enter valid location");
+ 			}
+
+ 			// Update quantity and location details
+ 			outboundRequisitionForm.updateQuantityAndLocation(selectedLocationId);
+
+ 			// Assign robot for outbound delivery based on product weight
+ 			int weight = outboundRequisitionForm.getProductWeight(productCode);
+ 			Robot robot = outboundRequisitionForm.assignRobotBasedOnCapacity(weight);
+
+ 			// Display the robot details assigned for the outbound delivery
+ 			outboundRequisitionForm.displayRobotDetails(robot, productCode);
+
+ 			// Confirm product added to the cart
+ 			System.out.println("\nProduct Added to Cart");
+ 		}
+ 	}
 }

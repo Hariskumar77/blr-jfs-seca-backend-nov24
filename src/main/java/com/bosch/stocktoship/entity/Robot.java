@@ -1,22 +1,37 @@
 package com.bosch.stocktoship.entity;
 
-/***
-* Represents a Robot assigned to handle a product with a specific product code.
-* AUTHOR: CHARUL SAINI(SIC2COB)
-***/
 public class Robot {
- 
-	// Code for the product the robot is assigned to
-	private String code;
- 
-	// Constructor initializes the robot with a product code
-	public Robot(String code) {
-		this.code = code;
+	/**
+	 * @AUTHOR: CHARUL SAINI (SIC2COB)
+	 * @AUTHOR: DAFEDAR MUJAHID
+	 */
+	int id, capacity;
+	String name;
+	public int getId() {
+		return id;
 	}
- 
-	// Displays the assignment status of the robot for the given product code
-	public void display() {
-		System.out.println("Robot Assigned for Product Code: " + code);
-		System.out.println("Status: " + true);
+	public void setId(int id) {
+		this.id = id;
 	}
+	public int getCapacity() {
+		return capacity;
+	}
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Robot(int id, int capacity, String name) {
+		super();
+		this.id = id;
+		this.capacity = capacity;
+		this.name = name;
+	}
+	
+	
+
 }
