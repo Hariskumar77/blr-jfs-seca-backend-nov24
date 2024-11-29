@@ -1,176 +1,204 @@
 package com.bosch.stocktoship.service;
+
+import java.sql.SQLException;
 //CODE WRITTEN BY HARSHAVARDHAN VS - 6th November 2024
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 import com.bosch.stocktoship.entity.GenerateBOM;
 import com.bosch.stocktoship.entity.ItemCodeGeneration;
+import com.bosch.stocktoship.exception.InvalidIntegerException;
+import com.bosch.stocktoship.exception.InvalidItemCodeException;
 
 public class BOMMain {
-    private List<GenerateBOM> bomList = new ArrayList<>();  // List to store BOM entries
-    private Scanner sc = new Scanner(System.in);  // Scanner object to read user input
+	BOMRepositoryService bomRepositoryService = new BOMRepositoryService();
 
-    // Method to collect and validate item details from the user
-    public ItemCodeGeneration collectItemDetails() throws InvalidItemCodeException {
-        // Validate and retrieve unique item code
-        String itemUniqueCode = validateItemUniqueCode();
+	/**
+	 * Methods takes the input from the user and generates ItemCode for valid inputs
+	 * 
+	 * @param input
+	 * @throws InvalidItemCodeException
+	 * @throws SQLException
+	 */
+	public void generateItemCode(Scanner input) throws InvalidItemCodeException, SQLException {
 
-        // Collect and validate the category
-        String category = getMandatoryInputWithRetry("Category");
+		String itemUniqueCode = validateItemUniqueCode(input);
+		String category = getMandatoryInputWithRetry("Category", input);
+		String dimensions = validateDimensionsInput(input);
+		String unitsOfMeasure = validateUnitsOfMeasure(input);
+		String itemDescription = getMandatoryInputWithRetry("Item Description", input);
+		String manufacturer = getMandatoryInputWithRetry("Manufacturer", input);
+		String countryOfOrigin = getMandatoryInputWithRetry("Country of Origin", input);
+		ItemCodeGeneration itemCodeGeneration = new ItemCodeGeneration(itemUniqueCode, category,
+				dimensions + " " + unitsOfMeasure, itemDescription, manufacturer, countryOfOrigin);
+		bomRepositoryService.addGeneratedItemCode(itemCodeGeneration);
+		System.out.println("Item code created successfully");
+	}
 
-        // Validate dimensions input (must be in AxBxC format)
-        String dimensions = validateDimensionsInput();
+	/**
+	 * Collects the BOMs details and at the end it will display the entered details
+	 * 
+	 * @param sc
+	 * @throws InvalidIntegerException
+	 * @throws SQLException
+	 */
+	public void collectBOMDetails(Scanner sc) throws InvalidIntegerException, SQLException {
 
-        // Validate units of measure (mm, cm, or inches)
-        String unitsOfMeasure = validateUnitsOfMeasure();
+		List<GenerateBOM> bomList = new ArrayList<>();
+		while (true) {
+			System.out.print("Enter Unique Code for BOM (must match Item Unique Code, 10 alphanumeric characters): ");
+			String uniqueCodeInput = sc.nextLine();
+			try {
+				if (!uniqueCodeInput.matches("[A-Za-z0-9]{10}")) {
+					throw new InvalidItemCodeException("Unique Code must be exactly 10 alphanumeric characters.");
+				}
+				if (!bomRepositoryService.isItemWIthIdAvailable(uniqueCodeInput)) {
+					System.out.println("Error: Unique Code does not match. Please re-enter.");
+					continue;
+				}
+				int quantity = validateIntegerInput("Quantity", sc);
+				int supplierCode = validateIntegerInput("Supplier Code", sc);
+				int subAssembly = validateIntegerInput("Sub Assembly Code", sc);
+				GenerateBOM bom = new GenerateBOM(uniqueCodeInput, quantity, supplierCode, subAssembly);
+				bomList.add(bom);
+				System.out.println("1. Add more items to BOM\n2. Save");
+				if (sc.nextLine().equals("1")) {
+					continue;
+				} else {
+					break;
+				}
+			} catch (InvalidItemCodeException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		bomRepositoryService.addItemToBOMDB(bomList);
+		displayBOMDetails(bomList);
+	}
 
-        // Collect mandatory item description
-        String itemDescription = getMandatoryInputWithRetry("Item Description");
+	/**
+	 * Displays the details of BOM entered by the user. Details are taken from the
+	 * DB and all details are available in DB
+	 * 
+	 * @param bomList
+	 * @throws SQLException
+	 */
+	public void displayBOMDetails(List<GenerateBOM> bomList) throws SQLException {
+		System.out.println("\nBOM Details:");
+		System.out.printf("%-5s %-15s %-30s %-15s %-20s %-15s %-20s %-10s%n", "S.No", "Item Code", "Description",
+				"Category", "Manufacturer", "Dimensions", "Country of Origin", "Quantity");
 
-        // Collect mandatory manufacturer name
-        String manufacturer = getMandatoryInputWithRetry("Manufacturer");
+		int serialNumber = 1;
 
-        // Collect mandatory country of origin
-        String countryOfOrigin = getMandatoryInputWithRetry("Country of Origin");
+		for (GenerateBOM bom : bomList) {
+			ItemCodeGeneration item = bomRepositoryService.getItemWithId(bom.getUniqueCode());
+			if (item != null) {
+				System.out.printf("%-5d %-15s %-30s %-15s %-20s %-15s %-20s %-10d%n", serialNumber++,
+						item.getItemUniqueCode(), item.getItemDescription(), item.getCategory(), item.getManufacturer(),
+						item.getDimensions(), item.getCountryOfOrigin(), bom.getQuantity());
+			}
+		}
+	}
 
-        // Create and return an ItemCodeGeneration object with collected details
-        return new ItemCodeGeneration(itemUniqueCode, category, dimensions + " " + unitsOfMeasure, itemDescription,
-                                      manufacturer, countryOfOrigin);
-    }
+	/**
+	 * Validates if the itemcode is 10 alphanumeric characters
+	 * 
+	 * @param input
+	 * @return
+	 * @throws InvalidItemCodeException
+	 */
+	private String validateItemUniqueCode(Scanner input) throws InvalidItemCodeException {
+		while (true) {
+			System.out.print("Enter Item Unique Code (10 alphanumeric characters): ");
+			String itemUniqueCode = input.nextLine();
+			try {
+				if (!itemUniqueCode.matches("[A-Za-z0-9]{10}")) {
+					throw new InvalidItemCodeException(
+							"Invalid item code. Must be exactly 10 alphanumeric characters.");
+				}
+				if (bomRepositoryService.isItemWIthIdAvailable(itemUniqueCode)) {
+					throw new InvalidItemCodeException("Unique item code already exists");
+				}
+				return itemUniqueCode;
+			} catch (InvalidItemCodeException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+	}
 
-    // Method to collect BOM details for an item and validate the inputs
-    public void collectBOMDetails(ItemCodeGeneration item) throws InvalidIntegerException {
-        while (true) {
-            // Prompt user for unique BOM code
-            System.out.print("Enter Unique Code for BOM (must match Item Unique Code, 10 alphanumeric characters): ");
-            String uniqueCodeInput = sc.nextLine();
-            try {
-                // Validate that unique code matches the required format (10 alphanumeric characters)
-                if (!uniqueCodeInput.matches("[A-Za-z0-9]{10}")) {
-                    throw new InvalidItemCodeException("Unique Code must be exactly 10 alphanumeric characters.");
-                }
+	/**
+	 * Validation for empty values
+	 * 
+	 * @param fieldName
+	 * @param sc
+	 * @return
+	 */
+	private String getMandatoryInputWithRetry(String fieldName, Scanner sc) {
+		while (true) {
+			// Prompt user for input
+			System.out.print("Enter " + fieldName + ": ");
+			String input = sc.nextLine();
+			if (input != null && !input.trim().isEmpty()) {
+				return input; // Return the valid input
+			} else {
+				// If input is empty, print a warning and re-prompt
+				System.out.println(fieldName + " is mandatory and cannot be empty. Please re-enter.");
+			}
+		}
+	}
 
-                // Check if the unique code matches the item unique code
-                if (!uniqueCodeInput.equals(item.getItemUniqueCode())) {
-                    System.out.println("Error: Unique Code does not match. Please re-enter.");
-                    continue;
-                }
+	/**
+	 * validates if the inputs are integer
+	 * 
+	 * @param fieldName
+	 * @param sc
+	 * @return
+	 */
+	private int validateIntegerInput(String fieldName, Scanner sc) {
+		while (true) {
+			System.out.print("Enter " + fieldName + ": ");
+			try {
+				return Integer.parseInt(sc.nextLine());
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid input for " + fieldName + ". Please enter an integer value.");
+			}
+		}
+	}
 
-                // Collect and validate quantity, supplier code, and sub-assembly code
-                int quantity = validateIntegerInput("Quantity");
-                int supplierCode = validateIntegerInput("Supplier Code");
-                int subAssembly = validateIntegerInput("Sub Assembly Code");
+	/**
+	 * Validates the dimensions are in LxBxH format
+	 * 
+	 * @param sc
+	 * @return
+	 */
+	private String validateDimensionsInput(Scanner sc) {
+		while (true) {
+			System.out.print("Enter Dimensions (format AxBxC): ");
+			String dimensions = sc.nextLine();
+			if (dimensions.matches("\\d+x\\d+x\\d+")) {
+				return dimensions;
+			} else {
+				System.out.println(
+						"Invalid format. Dimensions must be in the form AxBxC (e.g., 10x20x30). Please re-enter.");
+			}
+		}
+	}
 
-                // Create a new GenerateBOM object and add it to the BOM list
-                GenerateBOM bom = new GenerateBOM(uniqueCodeInput, quantity, supplierCode, subAssembly);
-                bomList.add(bom);
-                break;  // Exit the loop once valid input is received
-            } catch (InvalidItemCodeException e) {
-                // If an error occurs, print the message and re-prompt the user
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    // Method to display the details of all BOMs
-    public void displayBOMDetails(ItemCodeGeneration item) {
-        // Display header for the BOM details table
-        System.out.println("\nBOM Details:");
-        System.out.printf("%-5s %-15s %-30s %-15s %-20s %-15s %-20s %-10s%n",
-                "S.No", "Item Code", "Description", "Category", "Manufacturer", "Dimensions", "Country of Origin", "Quantity");
-
-        int serialNumber = 1;  // Initialize serial number for listing BOMs
-
-        // Iterate over the bomList and display each BOM's details
-        for (GenerateBOM bom : bomList) {
-            System.out.printf("%-5d %-15s %-30s %-15s %-20s %-15s %-20s %-10d%n",
-                    serialNumber++,  // Serial number for each row
-                    item.getItemUniqueCode(),  // Item unique code from the ItemCodeGeneration object
-                    item.getItemDescription(),  // Item description from the ItemCodeGeneration object
-                    item.getCategory(),  // Category from the ItemCodeGeneration object
-                    item.getManufacturer(),  // Manufacturer from the ItemCodeGeneration object
-                    item.getDimensions(),  // Dimensions from the ItemCodeGeneration object
-                    item.getCountryOfOrigin(),  // Country of origin from the ItemCodeGeneration object
-                    bom.getQuantity());  // Quantity from the GenerateBOM object
-        }
-    }
-
-    // Method to validate the item unique code input
-    private String validateItemUniqueCode() throws InvalidItemCodeException {
-        while (true) {
-            // Prompt user to enter the item unique code
-            System.out.print("Enter Item Unique Code (10 alphanumeric characters): ");
-            String itemUniqueCode = sc.nextLine();
-            try {
-                // Validate the format of the item unique code
-                if (!itemUniqueCode.matches("[A-Za-z0-9]{10}")) {
-                    throw new InvalidItemCodeException("Invalid item code. Must be exactly 10 alphanumeric characters.");
-                }
-                // Return the valid unique code
-                return itemUniqueCode;
-            } catch (InvalidItemCodeException e) {
-                // If the input is invalid, print the error message and re-prompt
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    // Method to get mandatory input from the user with retry if empty
-    private String getMandatoryInputWithRetry(String fieldName) {
-        while (true) {
-            // Prompt user for input
-            System.out.print("Enter " + fieldName + ": ");
-            String input = sc.nextLine();
-            if (input != null && !input.trim().isEmpty()) {
-                return input;  // Return the valid input
-            } else {
-                // If input is empty, print a warning and re-prompt
-                System.out.println(fieldName + " is mandatory and cannot be empty. Please re-enter.");
-            }
-        }
-    }
-
-    // Method to validate integer input (e.g., quantity, supplier code, sub-assembly)
-    private int validateIntegerInput(String fieldName) {
-        while (true) {
-            // Prompt user for integer input
-            System.out.print("Enter " + fieldName + ": ");
-            try {
-                // Attempt to parse the input as an integer
-                return Integer.parseInt(sc.nextLine());
-            } catch (NumberFormatException e) {
-                // If input is not an integer, print an error message and re-prompt
-                System.out.println("Invalid input for " + fieldName + ". Please enter an integer value.");
-            }
-        }
-    }
-
-    // Method to validate the dimensions input (must be in AxBxC format)
-    private String validateDimensionsInput() {
-        while (true) {
-            // Prompt user to enter the dimensions
-            System.out.print("Enter Dimensions (format AxBxC): ");
-            String dimensions = sc.nextLine();
-            if (dimensions.matches("\\d+x\\d+x\\d+")) {
-                return dimensions;  // Return valid dimensions
-            } else {
-                // If input format is invalid, print an error message and re-prompt
-                System.out.println("Invalid format. Dimensions must be in the form AxBxC (e.g., 10x20x30). Please re-enter.");
-            }
-        }
-    }
-
-    // Method to validate the units of measure input (must be mm, cm, or inches)
-    private String validateUnitsOfMeasure() {
-        while (true) {
-            // Prompt user to enter units of measure
-            System.out.print("Enter Units of Measure (mm/cm/inches): ");
-            String units = sc.nextLine().toLowerCase();
-            if (units.equals("mm") || units.equals("cm") || units.equals("inches")) {
-                return units;  // Return valid units of measure
-            } else {
-                // If input is invalid, print an error message and re-prompt
-                System.out.println("Invalid input. Units of Measure must be 'mm', 'cm', or 'inches'. Please re-enter.");
-            }
-        }
-    }
+	/**
+	 * Validates the measures by confirming if its mm, cm or inches
+	 * 
+	 * @param sc
+	 * @return
+	 */
+	private String validateUnitsOfMeasure(Scanner sc) {
+		while (true) {
+			System.out.print("Enter Units of Measure (mm/cm/inches): ");
+			String units = sc.nextLine().toLowerCase();
+			if (units.equals("mm") || units.equals("cm") || units.equals("inches")) {
+				return units;
+			} else {
+				System.out.println("Invalid input. Units of Measure must be 'mm', 'cm', or 'inches'. Please re-enter.");
+			}
+		}
+	}
 }

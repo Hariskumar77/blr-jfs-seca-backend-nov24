@@ -1,4 +1,4 @@
-package com.bosch.stocktoship.entity;
+package com.bosch.stocktoship.exception;
 
 /**
  * @author WIV1COB

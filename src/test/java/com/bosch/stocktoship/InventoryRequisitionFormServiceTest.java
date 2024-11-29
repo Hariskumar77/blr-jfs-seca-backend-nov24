@@ -30,7 +30,6 @@ public class InventoryRequisitionFormServiceTest {
     @Test
     public void testToString() {
         // Set values to the form object
-    	inventoryRequisitionForm.setNum(1);
     	inventoryRequisitionForm.setRequisitionerDepartment("IT Department");
         inventoryRequisitionForm.setUniqueItemCode("ITEM123");
         inventoryRequisitionForm.setItemDescription("Laptop");

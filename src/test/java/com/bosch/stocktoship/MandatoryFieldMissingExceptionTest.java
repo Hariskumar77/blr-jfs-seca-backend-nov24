@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 
-import com.bosch.stocktoship.service.MandatoryFieldMissingException;
+import com.bosch.stocktoship.exception.MandatoryFieldMissingException;
 
 public class MandatoryFieldMissingExceptionTest {
 

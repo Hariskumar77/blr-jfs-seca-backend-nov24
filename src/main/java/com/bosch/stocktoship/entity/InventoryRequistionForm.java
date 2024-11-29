@@ -10,8 +10,8 @@ public class InventoryRequistionForm {
 	public InventoryRequistionForm() {
 	}
 	
-	static int serialNo = 0;
-	private int num;
+	
+	
 	private String requisitionerDepartment;
 	private Date dateOfRequisition;
 	private String uniqueItemCode;
@@ -23,14 +23,6 @@ public class InventoryRequistionForm {
 	private Date materialRequiredDate;
 	private String notesAndComments;
 	private boolean status;
-
-	public int getNum() {
-		return num;
-	}
-
-	public void setNum(int num) {
-		this.num = num;
-	}
 
 	public boolean isStatus() {
 		return status;
@@ -123,9 +115,7 @@ public class InventoryRequistionForm {
 	public InventoryRequistionForm(String requisitionerDepartment, Date dateOfRequisition, String uniqueItemCode,
 			String itemDescription, int quantity, String unitOfMeasure, String purposeOfRequisitions,
 			String deliveryDepartment, Date materialRequiredDate, String notesAndComments, boolean status) {
-		super();
-		serialNo++;
-		this.num = serialNo;
+		
 		this.requisitionerDepartment = requisitionerDepartment;
 		this.dateOfRequisition = dateOfRequisition;
 		this.uniqueItemCode = uniqueItemCode;
@@ -141,9 +131,9 @@ public class InventoryRequistionForm {
 
 	@Override
 	public String toString() {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd.mm.yyyy");
+		SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
 		formatter.setLenient(false);
-		return String.format("%-12s%-13s%-17s%-13s%-17s%-13s%-18s%-18s%-15s%-15s", getNum(), getRequisitionerDepartment(),
+		return String.format("%-13s%-17s%-13s%-17s%-13s%-18s%-18s%-15s%-15s", getRequisitionerDepartment(),
 				formatter.format(getDateOfRequisition()), getUniqueItemCode(), getItemDescription(), getQuantity(), getUnitOfMeasure(),
 				getPurposeOfRequisitions(), getDeliveryDepartment(), formatter.format(getMaterialRequiredDate()));
 	}

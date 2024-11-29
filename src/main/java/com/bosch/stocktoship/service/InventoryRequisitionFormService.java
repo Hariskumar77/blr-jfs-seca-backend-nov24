@@ -1,5 +1,5 @@
 package com.bosch.stocktoship.service;
-
+ 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -13,34 +13,40 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
-import com.bosch.stocktoship.entity.InvalidItemCodeFormatExcpetion;
 import com.bosch.stocktoship.entity.InventoryRequistionForm;
-
+import com.bosch.stocktoship.exception.InvalidItemCodeFormatExcpetion;
+ 
 /**
- * Service class for Managing Inventory Requisition Form. This class provides
- * methods for creating and viewing the Inventory Requisition Form
- * 
- * @author WIV1COB
- */
-
+* Service class for Managing Inventory Requisition Form. This class provides
+* methods for creating and viewing the Inventory Requisition Form
+*
+* @author WIV1COB
+*/
+ 
 public class InventoryRequisitionFormService {
-
+	
+	
+ 
 	public static List<InventoryRequistionForm> inventoryRequisitionFormList = new ArrayList<InventoryRequistionForm>();
 	Map<Integer, List<InventoryRequistionForm>> IRAppriovalMap = new HashMap<Integer, List<InventoryRequistionForm>>();
-
+ 
 	public List<InventoryRequistionForm> addItemsToIR() {
 		return inventoryRequisitionFormList;
 	}
-
+	
+	/**creating a object for InventoryRequisitionFormServiceDAO **/
+	InventoryRequisitionFormServiceDAO IRFSDAO=new InventoryRequisitionFormServiceDAO ();
+	
+ 
 	/**
 	 * This method accepts all the inputs from users and add it into
 	 * inventoryRequisitionFormList. All the inputed inventory requisition form data
 	 * will be available in this list.
-	 * 
+	 *
 	 * @param stream for taking input from user
 	 */
 	public void takeDataForInventoryRequistionForm(Scanner input) {
-		SimpleDateFormat formatDate = new SimpleDateFormat("dd.mm.yyyy");
+		SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.M.yyyy");
 		LocalDate inputDate;
 		LocalDate currentDate = LocalDate.now();
@@ -151,8 +157,9 @@ public class InventoryRequisitionFormService {
 		String notesAndComments = input.nextLine();
 		inventoryRequistionForm.setNotesAndComments(notesAndComments);
 		inventoryRequisitionFormList.add(inventoryRequistionForm);
+		IRFSDAO.saveInventoryRequisitionForm(inventoryRequistionForm,""); // Save to DB
 	}
-
+ 
 	/**
 	 * This is the parent method which runs takeDataForInventoryRequistionForm and
 	 * approveRequsitionForm internally and accepts all the validated requisition
@@ -160,7 +167,6 @@ public class InventoryRequisitionFormService {
 	 * inventoryRequsitionNumber
 	 */
 	public void manageIRF(Scanner input) {
-		
 		while (true) {
 			System.out.println("Enter the following details to raise Inventory Requisition");
 			takeDataForInventoryRequistionForm(input);
@@ -170,11 +176,12 @@ public class InventoryRequisitionFormService {
 			if (s.equals("1")) {
 				continue;
 			} else {
+				int slNo = 1;
 				System.out.printf("%-12s%-13s%-17s%-13s%-17s%-13s%-18s%-18s%-15s%-15s\n", "S no", "Req Dept",
 						"Date of Req", "Item code", "Description", "Quantity", "Unit of measure", "Purpose of Req",
 						"Delivery Dep", "Material Req Date");
 				for (InventoryRequistionForm inventoryRequistionForm : inventoryRequisitionFormList) {
-					System.out.println(inventoryRequistionForm);
+					System.out.printf("%-12s%-13s",slNo , inventoryRequistionForm.toString());
 				}
 				System.out.println("\n");
 				System.out.println("1. Submit");
@@ -183,7 +190,7 @@ public class InventoryRequisitionFormService {
 				do {
 					inventoryRequsitionNumber = 1000 + new Random().nextInt(9000);
 				} while (IRAppriovalMap.get(inventoryRequsitionNumber) != null);
-
+ 
 				IRAppriovalMap.put(inventoryRequsitionNumber, inventoryRequisitionFormList);
 				System.out.println("Inventory Requisitions submitted successfully\n\nInventory Requisitions Number: "
 						+ inventoryRequsitionNumber);
@@ -191,15 +198,19 @@ public class InventoryRequisitionFormService {
 			}
 		}
 		approveRequsitionForm(input);
+		input.close();
 	}
-
+	
+	
+ 
+ 
 	/**
 	 * Method for approving the generated inventory requisition form
-	 * 
+	 *
 	 * @param stream for taking input from user
 	 */
 	public void approveRequsitionForm(Scanner input) {
-		System.out.printf("%-12s%-13s%-17s%-13s%-17s%-13s%-18s%-18s%-15s%-15s\n", "S no", "Req Dept", "Date of Req",
+		System.out.printf("%-13s%-17s%-13s%-17s%-13s%-18s%-18s%-15s%-15s\n", "Req Dept", "Date of Req",
 				"Item code", "Description", "Quantity", "Unit of measure", "Purpose of Req", "Delivery Dep",
 				"Material Req Date");
 		for (InventoryRequistionForm form : inventoryRequisitionFormList) {
@@ -208,11 +219,23 @@ public class InventoryRequisitionFormService {
 			String line = input.nextLine();
 			if (line.equals("1")) {
 				form.setStatus(true);
-				System.out.println("Approved sucessfully");
+				
+	//			IRFSDAO.initializeTable("APPROVED");
+				IRFSDAO.saveInventoryRequisitionForm(form,"APPROVED");
+				
+				
 			} else {
 				form.setStatus(false);
+	//			IRFSDAO.initializeTable("REJECTED");
+				IRFSDAO.saveInventoryRequisitionForm(form,"REJECTED");
 				System.out.println("Form has been rejected");
 			}
 		}
+		input.close();
 	}
+	
+	
+	
+                       
+	
 }

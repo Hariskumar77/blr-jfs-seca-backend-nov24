@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import com.bosch.stocktoship.service.InvalidIntegerException;
+import com.bosch.stocktoship.exception.InvalidIntegerException;
 
 public class InvalidIntegerExceptionTest {
 
