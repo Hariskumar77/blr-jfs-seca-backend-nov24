@@ -8,10 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bosch.stocktoship.entity.DeliveryDepartment;
@@ -20,9 +22,11 @@ import com.bosch.stocktoship.entity.Product;
 import com.bosch.stocktoship.entity.Robot;
 import com.bosch.stocktoship.repository.DeliveryDepartmentRepository;
 import com.bosch.stocktoship.repository.LocationRepository;
+import com.bosch.stocktoship.repository.ProductRepository;
 import com.bosch.stocktoship.repository.RobotRepository;
 import com.bosch.stocktoship.service.DeliveryDepartmentService;
 import com.bosch.stocktoship.service.LocationService;
+import com.bosch.stocktoship.service.ProductService;
 import com.bosch.stocktoship.service.RobotService;
 
 @ExtendWith(MockitoExtension.class)
@@ -154,5 +158,58 @@ class UseCase2Testing {
 
         assertEquals("No robot found with the specified capacity.", exception.getMessage());
     }
+    
+// AUTHOR - CHARUL SAINI (SIC2COB)
+    
+    @InjectMocks
+    private ProductService productService;
+ 
+    @Mock
+    private ProductRepository productRepository;
+ 
+    private Product sampleProduct;
+ 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+ 
+        // Sample product setup
+        sampleProduct = new Product(1, "Sample Product", 10, 20, 30, 40, 6000);
+    }
+ 
+    @Test
+    void testSaveProduct() {
+        when(productRepository.save(any(Product.class))).thenReturn(sampleProduct);
+ 
+        Product savedProduct = productService.save(sampleProduct);
+ 
+        assertNotNull(savedProduct);
+        assertEquals(1, savedProduct.getProductCode());
+        assertEquals("Sample Product", savedProduct.getName());
+        verify(productRepository, times(1)).save(sampleProduct);
+    }
+ 
+    @Test
+    void testGetProductById_Success() {
+        when(productRepository.findById(1)).thenReturn(Optional.of(sampleProduct));
+ 
+        Product fetchedProduct = productService.getProductById(1);
+ 
+        assertNotNull(fetchedProduct);
+        assertEquals("Sample Product", fetchedProduct.getName());
+        assertEquals(6000, fetchedProduct.getVolume());
+        verify(productRepository, times(1)).findById(1);
+    }
+ 
+    @Test
+    void testGetProductById_NotFound() {
+        when(productRepository.findById(2)).thenReturn(Optional.empty());
+ 
+        Product fetchedProduct = productService.getProductById(2);
+ 
+        assertNull(fetchedProduct);
+        verify(productRepository, times(1)).findById(2);
+    }
+
     
 }
