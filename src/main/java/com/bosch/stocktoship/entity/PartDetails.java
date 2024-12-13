@@ -1,53 +1,53 @@
 package com.bosch.stocktoship.entity;
 
+import jakarta.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name = "part_details1")
 public class PartDetails {
-	private int partNumber;
-	private String partName;
-	private String partDescription;
 
-	public PartDetails(int partNumber, String partName, String partDescription) {
-		super();
-		this.partNumber = partNumber;
-		this.partName = partName;
-		this.partDescription = partDescription;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int partId;
 
-	public PartDetails() {
-		// TODO Auto-generated constructor stub
-	}
+    @Column(unique = true, nullable = false)
+    private int partCode;
+    private String partDescription;
 
-	public PartDetails(String partName, String partDescription) {
-		super();
-		this.partName = partName;
-		this.partDescription = partDescription;
-	}
+    @OneToMany(mappedBy = "partDetails", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<StageDetails> stageDetails;
 
-	public PartDetails(int partNumber) {
-		this.partNumber = partNumber;
- 	}
+    public int getPartId() {
+        return partId;
+    }
 
-	public int getPartNumber() {
-		return partNumber;
-	}
+    public void setPartId(int partId) {
+        this.partId = partId;
+    }
 
-	public void setPartNumber(int partNumber) {
-		this.partNumber = partNumber;
-	}
+    public int getPartCode() {
+        return partCode;
+    }
 
-	public String getPartName() {
-		return partName;
-	}
+    public void setPartCode(int partCode) {
+        this.partCode = partCode;
+    }
 
-	public void setPartName(String partName) {
-		this.partName = partName;
-	}
+    public String getPartDescription() {
+        return partDescription;
+    }
 
-	public String getPartDescription() {
-		return partDescription;
-	}
+    public void setPartDescription(String partDescription) {
+        this.partDescription = partDescription;
+    }
 
-	public void setPartDescription(String partDescription) {
-		this.partDescription = partDescription;
-	}
+    public List<StageDetails> getStageDetails() {
+        return stageDetails;
+    }
 
+    public void setStageDetails(List<StageDetails> stageDetails) {
+        this.stageDetails = stageDetails;
+    }
 }
+

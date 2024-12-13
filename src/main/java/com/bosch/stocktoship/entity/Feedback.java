@@ -1,77 +1,75 @@
 package com.bosch.stocktoship.entity;
-/**
- * @author BAP3COB
- * Class representing feedback information for a particular part or product stage.
- * It includes details like the stage, part number, part description, type of feedback,
- * defect type, and any additional remarks.
- */
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "feedback")
 public class Feedback {
-    private String stage;
-    private String partNumber;
-    private String partDescription;
-    private String feedbackType;
-    private DefectType defectType;
-    private String remarks;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    public String getStage() {
-        return stage;
-    }
+	@Column(nullable = true)
+	private boolean QAFailed;
+	@Column(nullable = true)
+	private boolean metRequirements;
+	@Column(nullable = true)
+	private String defectType;
+	private String remarks;
 
-    public void setStage(String stage) {
-        this.stage = stage;
-    }
+	private int partCode;
 
-    public String getPartNumber() {
-        return partNumber;
-    }
+	public int getPartCode() {
+		return partCode;
+	}
 
-    public void setPartNumber(String partNumber) {
-        this.partNumber = partNumber;
-    }
+	public void setPartCode(int partCode) {
+		this.partCode = partCode;
+	}
 
-    public String getPartDescription() {
-        return partDescription;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public void setPartDescription(String partDescription) {
-        this.partDescription = partDescription;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public String getFeedbackType() {
-        return feedbackType;
-    }
+	public boolean isQAFailed() {
+		return QAFailed;
+	}
 
-    public void setFeedbackType(String feedbackType) {
-        this.feedbackType = feedbackType;
-    }
+	public void setQAFailed(boolean qAFailed) {
+		QAFailed = qAFailed;
+	}
 
-    public DefectType getDefectType() {
-        return defectType;
-    }
+	public boolean isMetRequirements() {
+		return metRequirements;
+	}
 
-    public void setDefectType(DefectType defectType) {
-        this.defectType = defectType;
-    }
+	public void setMetRequirements(boolean metRequirements) {
+		this.metRequirements = metRequirements;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getDefectType() {
+		return defectType;
+	}
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
+	public void setDefectType(String defectType) {
+		this.defectType = defectType;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Stage: ").append(stage).append("\n");
-        sb.append("Part Number: ").append(partNumber).append("\n");
-        sb.append("Part Description: ").append(partDescription).append("\n");
-        sb.append("Feedback: ").append(feedbackType).append("\n");
-        if (defectType != null) {
-            sb.append("Defect Type: ").append(defectType.getLabel()).append("\n");
-        }
-        sb.append("Remarks: ").append(remarks).append("\n");
-        return sb.toString();
-    }
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
 }

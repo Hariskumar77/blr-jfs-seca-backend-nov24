@@ -1,21 +1,24 @@
 package com.bosch.stocktoship.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.bosch.stocktoship.entity.Feedback;
+import com.bosch.stocktoship.repository.FeedbackRepository;
 
-/**
- * @author BAP3COB
- * Service class for handling feedback-related operations.
- * This class includes methods for submitting feedback and generating a Bill of Materials (BOM).
- */
+@Service
 public class FeedbackService {
-    
-    public String submitFeedback(Feedback feedback) {
-    	String result ="\n--- Feedback Submitted ---\n" + feedback;
-		return result;
-    }
 
-    public String generateBOM() {
-    	String result = "BOM generated!!!";
-    	return result;
-    }
+	@Autowired
+	private FeedbackRepository feedbackRepository;
+	
+	public Feedback saveFeedback(Feedback feedback) {
+		return feedbackRepository.save(feedback);
+	}
+	
+	public List<Feedback> getAllFeedbacks(){
+		return feedbackRepository.findAll();
+	}
 }
