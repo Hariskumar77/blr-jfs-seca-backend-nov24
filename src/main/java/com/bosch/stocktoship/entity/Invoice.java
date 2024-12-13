@@ -1,106 +1,106 @@
 package com.bosch.stocktoship.entity;
 
-//Created by AKASH HEGDE P on 4th November Squad 1
-
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-public class Invoice { 
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+ 
+@Entity
+@Table(name="invoices")
+public class Invoice {
+ 
+	
+    private long invoiceNumber;
+    private Date invoiceDate;
+    private double amount;
+    private Date dueDate;
+    @Id
+    private long poNumber;
+    private long supplierId;
+    private boolean approvedByStoreManager;
+    private boolean approvedByAccount;
+    private boolean approvedByAccountManager;
+    
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplierId", insertable = false, updatable = false)
+    private Supplier supplier;
+    
+	public long getInvoiceNumber() {
+		return invoiceNumber;
+	}
+	public void setInvoiceNumber(long invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
+	}
+	public Date getInvoiceDate() {
+		return invoiceDate;
+	}
+	public void setInvoiceDate(Date invoiceDate) {
+		this.invoiceDate = invoiceDate;
+	}
+	public double getAmount() {
+		return amount;
+	}
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+	public Date getDueDate() {
+		return dueDate;
+	}
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
+	}
+	public long getPoNumber() {
+		return poNumber;
+	}
+	public void setPoNumber(long poNumber) {
+		this.poNumber = poNumber;
+	}
+	public long getSupplierId() {
+		return supplierId;
+	}
+	public void setSupplierId(long supplierId) {
+		this.supplierId = supplierId;
+	}
+    public Supplier getSupplier() {
+        return supplier;
+    }
 
-  // Instance variables for Invoice details
-  private long invoiceNumber;
-  private Date invoiceDate;
-  private double amount;
-  private Date dueDate;
-  private long poNumber;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+    
+    
 
-  // Static variable to track the invoice status across all invoices
-  public static boolean invoiceStatus = false;
-
-  // Static list to store all generated invoices
-  public static List<Invoice> generatedInvoices = new ArrayList<>();
-
-  // Constructor to initialize an Invoice object
-  public Invoice(long invoiceNumber, Date invoiceDate, double amount, Date dueDate, long poNumber, boolean invoiceStatus) {
-      this.invoiceNumber = invoiceNumber;
-      this.invoiceDate = invoiceDate;
-      this.amount = amount;
-      this.dueDate = dueDate;
-      this.poNumber = poNumber;
-      this.invoiceStatus = invoiceStatus;
-  }
-
-  // Getter and Setter for invoiceNumber
-  public long getInvoiceNumber() {
-      return invoiceNumber;
-  }
-
-  public void setInvoiceNumber(long invoiceNumber) {
-      this.invoiceNumber = invoiceNumber;
-  }
-
-  // Getter and Setter for invoiceDate
-  public Date getInvoiceDate() {
-      return invoiceDate;
-  }
-
-  public void setInvoiceDate(Date invoiceDate) {
-      this.invoiceDate = invoiceDate;
-  }
-
-  // Getter and Setter for dueDate
-  public Date getDueDate() {
-      return dueDate;
-  }
-
-  public void setDueDate(Date dueDate) {
-      this.dueDate = dueDate;
-  }
-
-  // Getter and Setter for amount
-  public double getAmount() {
-      return amount;
-  }
-
-  public void setAmount(double amount) {
-      this.amount = amount;
-  }
-
-  // Getter and Setter for poNumber
-  public long getPoNumber() {
-      return poNumber;
-  }
-
-  public void setPoNumber(long poNumber) {
-      this.poNumber = poNumber;
-  }
-
-  // Getter and Setter for invoiceStatus
-  public boolean getInvoiceStatus() {
-      return invoiceStatus;
-  }
-
-  public void setInvoiceStatus(boolean invoiceStatus) {
-      this.invoiceStatus = invoiceStatus;
-  }
-
-  // Method to generate an invoice and add it to the list of generated invoices
-  public Invoice generateInvoice() {
-      System.out.println("Generating Invoice By Supplier");
-
-      if (generatedInvoices.contains(this)) {
-          System.out.println("This invoice is already in the list");
-      } else {
-          System.out.println("Adding new invoice to the list");
-          generatedInvoices.add(this);
-      }
-      return this;
-  }
-
-  // Static method to get the list of generated invoices
-  public static List<Invoice> getGeneratedInvoices() {
-      return generatedInvoices;
-  }
+	@Override
+	public String toString() {
+		return "Invoice [invoiceNumber=" + invoiceNumber + ", invoiceDate=" + invoiceDate + ", amount=" + amount
+				+ ", dueDate=" + dueDate + ", poNumber=" + poNumber + ", supplierId=" + supplierId
+				+ ", approvedByStoreManager=" + approvedByStoreManager + ", approvedByAccount=" + approvedByAccount
+				+ ", approvedByAccountManager=" + approvedByAccountManager + ", supplier=" + supplier + "]";
+	}
+	public boolean isApprovedByStoreManager() {
+		return approvedByStoreManager;
+	}
+	public void setApprovedByStoreManager(boolean approvedByStoreManager) {
+		this.approvedByStoreManager = approvedByStoreManager;
+	}
+	public boolean isApprovedByAccountManager() {
+		return approvedByAccountManager;
+	}
+	public void setApprovedByAccountManager(boolean approvedByAccountManager) {
+		this.approvedByAccountManager = approvedByAccountManager;
+	}
+	public boolean isApprovedByAccount() {
+		return approvedByAccount;
+	}
+	public void setApprovedByAccount(boolean approvedByAccount) {
+		this.approvedByAccount = approvedByAccount;
+	}
+ 
+ 
 }
