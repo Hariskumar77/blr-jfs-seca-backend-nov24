@@ -1,21 +1,13 @@
 package com.bosch.stocktoship.entity;
 
-import java.util.UUID;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
-@Table(name="users")
-public class User {
+public class UserDto {
 
-    @Id
-    private String UserId = UUID.randomUUID().toString();
+
     private String username;
     private String name;
     private String email;
@@ -62,7 +54,9 @@ public class User {
         this.password = password;
     }
 
-    public User(String username, String password , String name  , String email , String usertype) {
+    public UserDto()
+    {}
+    public UserDto(String username, String password , String name , String usertype , String email) {
         this.username = username;
         this.name = name;
         this.password = password;
@@ -70,10 +64,4 @@ public class User {
         this.usertype = usertype;
     }
 
-    public User()
-    {}
-
-
-
 }
-
